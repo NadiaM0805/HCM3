@@ -183,7 +183,11 @@ export function Modal({ visible, onHide, size = "medium", children }: ModalProps
 
 // Modal sub-components to match Phenom API
 Modal.Header = function ModalHeader({ children }: { children: React.ReactNode }) {
-  return <div className="px-6 py-4 border-b border-gray-200">{children}</div>;
+  return (
+    <div className="px-6 py-4 border-b border-gray-200 relative flex items-center justify-between">
+      {children}
+    </div>
+  );
 };
 
 Modal.Header.Title = function ModalHeaderTitle({ children }: { children: React.ReactNode }) {
@@ -194,7 +198,7 @@ Modal.Header.CloseButton = function ModalHeaderCloseButton({ onClick }: { onClic
   return (
     <button
       onClick={onClick}
-      className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-2xl leading-none"
+      className="text-gray-400 hover:text-gray-600 text-2xl leading-none w-8 h-8 flex items-center justify-center"
       aria-label="Close"
     >
       ×
