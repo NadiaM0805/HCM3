@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Button contrast fixes - Comprehensive solution for all buttons */
+button {
+  min-height: 2.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+/* Default: All buttons get primary styling unless explicitly secondary/neutral */
+button:not(:disabled):not([class*="secondary"]):not([class*="neutral"]) {
+  background-color: #4d3ee0 !important;
+  color: white !important;
+  border-color: #4d3ee0 !important;
+}
+
+button:not(:disabled):not([class*="secondary"]):not([class*="neutral"]):hover {
+  background-color: #3d2eb8 !important;
+  border-color: #3d2eb8 !important;
+}
+
+/* Secondary button styling */
+button[class*="secondary"],
+button.secondary {
+  background-color: white !important;
+  color: #4d3ee0 !important;
+  border: 1px solid #4d3ee0 !important;
+}
+
+button[class*="secondary"]:hover:not(:disabled),
+button.secondary:hover:not(:disabled) {
+  background-color: #f5f3ff !important;
+}
+
+/* Neutral button styling */
+button[class*="neutral"],
+button.neutral {
+  background-color: #f3f4f6 !important;
+  color: #374151 !important;
+  border: 1px solid #d1d5db !important;
+}
+
+button[class*="neutral"]:hover:not(:disabled),
+button.neutral:hover:not(:disabled) {
+  background-color: #e5e7eb !important;
+}
+
+/* Ensure all text inside buttons is visible */
+button *,
+button span,
+button label,
+button div,
+button p {
+  color: inherit !important;
+}
+
+/* Fix for any button that might have white background with no border */
+button[style*="background-color: white"],
+button[style*="background: white"],
+button[style*="background-color: rgb(255, 255, 255)"] {
+  color: #4d3ee0 !important;
+  border: 1px solid #4d3ee0 !important;
+}
+
+/* Disabled state */
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
