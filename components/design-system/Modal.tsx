@@ -16,7 +16,7 @@ const sizeMap = {
 };
 
 // Create a context to pass onHide to child components
-const ModalContext = React.createContext<{ onHide: () => void }>({ onHide: () => {} });
+const ModalContext = React.createContext<{ onHide: () => void } | null>(null);
 
 // Create Header component first
 function ModalHeader({ children }: { children: React.ReactNode }) {
@@ -34,8 +34,8 @@ ModalHeader.Title = function ModalHeaderTitle({ children }: { children: React.Re
 
 // Create Header.CloseButton component
 ModalHeader.CloseButton = function ModalHeaderCloseButton({ onClick }: { onClick?: () => void }) {
-  const { onHide } = React.useContext(ModalContext);
-  const handleClick = onClick || onHide;
+  const context = React.useContext(ModalContext);
+  const handleClick = onClick || (context?.onHide || (() => {}));
   
   return (
     <button
