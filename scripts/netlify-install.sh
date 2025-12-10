@@ -49,7 +49,7 @@ EOF
 cat > node_modules/@phenom/react-ds/modal.tsx << 'EOF'
 // Re-export Modal and all its nested components
 export { Modal } from './fallbacks';
-export type { ModalProps } from './fallbacks';
+// ModalProps type is declared in modal.d.ts
 EOF
 
 cat > node_modules/@phenom/react-ds/progressbar.tsx << 'EOF'
