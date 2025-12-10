@@ -12,12 +12,12 @@ The build is failing because Vercel cannot access the private npm registry `pie-
 
 ### For npm registry authentication:
 - **Name**: `NPM_TOKEN` or `NPM_AUTH_TOKEN`
-- **Value**: `dGVhbS5zZXJ2aWNlaHViQHBoZW5vbXBlb3BsZS5jb206U2VydmljZWh1YjEyMw==`
+- **Value**: `[YOUR_NPM_TOKEN_HERE]` - Get this from your `.npmrc` file or your npm registry administrator
 - **Environment**: Production, Preview, Development (select all)
 
 ### For Font Awesome (if needed):
 - **Name**: `FONTAWESOME_NPM_AUTH_TOKEN`
-- **Value**: `994BC836-8EC8-472C-A777-593031E0E9E2`
+- **Value**: `[YOUR_FONTAWESOME_TOKEN_HERE]` - Get this from your Font Awesome account or `.npmrc` file
 - **Environment**: Production, Preview, Development (select all)
 
 5. Also add these registry URLs as environment variables:

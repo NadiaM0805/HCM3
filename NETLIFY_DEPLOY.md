@@ -18,12 +18,12 @@ Netlify should auto-detect Next.js, but verify:
 
 ### Variable 1:
 - **Key**: `NPM_TOKEN`
-- **Value**: `dGVhbS5zZXJ2aWNlaHViQHBoZW5vbXBlb3BsZS5jb206U2VydmljZWh1YjEyMw==`
+- **Value**: `[YOUR_NPM_TOKEN_HERE]` - Get this from your `.npmrc` file or your npm registry administrator
 - **Scopes**: Production, Deploy previews, Branch deploys (select all)
 
 ### Variable 2:
 - **Key**: `FONTAWESOME_NPM_AUTH_TOKEN`
-- **Value**: `994BC836-8EC8-472C-A777-593031E0E9E2`
+- **Value**: `[YOUR_FONTAWESOME_TOKEN_HERE]` - Get this from your Font Awesome account or `.npmrc` file
 - **Scopes**: Production, Deploy previews, Branch deploys (select all)
 
 3. Click **Save**
