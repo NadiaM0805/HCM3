@@ -46,11 +46,12 @@ export { Snackbar } from './fallbacks';
 export { toast } from './fallbacks';
 EOF
 
-# Create modal stub - re-export everything to preserve nested structure
+# Create modal stub - import and re-export to preserve nested structure
 cat > node_modules/@phenom/react-ds/modal.tsx << 'EOF'
-// Re-export Modal and all its nested components
-export { Modal } from './fallbacks';
-// ModalProps type is declared in modal.d.ts
+import { Modal as FallbackModal } from './fallbacks';
+
+// Re-export with nested structure preserved
+export const Modal = FallbackModal;
 EOF
 
 cat > node_modules/@phenom/react-ds/progressbar.tsx << 'EOF'
@@ -67,6 +68,7 @@ module.exports = require('./button');
 EOF
 
 # Create TypeScript declaration files for nested component structures
+# This must match the actual structure in fallbacks.tsx
 cat > node_modules/@phenom/react-ds/modal.d.ts << 'EOF'
 import React from 'react';
 
@@ -77,31 +79,17 @@ export interface ModalProps {
   children: React.ReactNode;
 }
 
-interface ModalHeaderProps {
-  children: React.ReactNode;
-}
-
-interface ModalHeaderTitleProps {
-  children: React.ReactNode;
-}
-
-interface ModalHeaderCloseButtonProps {
-  onClick?: () => void;
-}
-
-interface ModalContentProps {
-  children: React.ReactNode;
-}
-
-interface ModalComponent extends React.FC<ModalProps> {
-  Header: React.FC<ModalHeaderProps> & {
-    Title: React.FC<ModalHeaderTitleProps>;
-    CloseButton: React.FC<ModalHeaderCloseButtonProps>;
+// Declare the nested component structure to match fallbacks.tsx
+declare const ModalComponent: React.FC<ModalProps> & {
+  Header: React.FC<{ children: React.ReactNode }> & {
+    Title: React.FC<{ children: React.ReactNode }>;
+    CloseButton: React.FC<{ onClick?: () => void }>;
   };
-  Content: React.FC<ModalContentProps>;
-}
+  Content: React.FC<{ children: React.ReactNode }>;
+};
 
-export const Modal: ModalComponent;
+export const Modal: typeof ModalComponent;
+export type { ModalProps };
 EOF
 
 # Create TypeScript declaration for Card nested components
