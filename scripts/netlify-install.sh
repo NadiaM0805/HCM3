@@ -42,7 +42,8 @@ export { Card } from './fallbacks';
 EOF
 
 cat > node_modules/@phenom/react-ds/snackbar.tsx << 'EOF'
-export { Snackbar, toast } from './fallbacks';
+export { Snackbar } from './fallbacks';
+export { toast } from './fallbacks';
 EOF
 
 # Create modal stub - re-export everything to preserve nested structure
