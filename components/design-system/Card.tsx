@@ -7,7 +7,13 @@ export interface CardProps {
   className?: string;
 }
 
-export function Card({ children, className = "" }: CardProps) {
+// Define the Card component type with nested components
+interface CardComponent extends React.FC<CardProps> {
+  Header: React.FC<{ title: string; description?: string }>;
+  Content: React.FC<{ children: React.ReactNode; className?: string }>;
+}
+
+function CardComponentImpl({ children, className = "" }: CardProps) {
   return (
     <div className={`bg-white rounded-lg shadow-sm border border-gray-200 ${className}`}>
       {children}
@@ -15,7 +21,7 @@ export function Card({ children, className = "" }: CardProps) {
   );
 }
 
-Card.Header = function CardHeader({
+CardComponentImpl.Header = function CardHeader({
   title,
   description,
 }: {
@@ -30,7 +36,7 @@ Card.Header = function CardHeader({
   );
 };
 
-Card.Content = function CardContent({
+CardComponentImpl.Content = function CardContent({
   children,
   className = "",
 }: {
@@ -40,3 +46,5 @@ Card.Content = function CardContent({
   return <div className={`p-6 ${className}`}>{children}</div>;
 };
 
+// Export with proper typing
+export const Card = CardComponentImpl as CardComponent;

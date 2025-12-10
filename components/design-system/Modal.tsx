@@ -18,7 +18,43 @@ const sizeMap = {
 // Create a context to pass onHide to child components
 const ModalContext = React.createContext<{ onHide: () => void }>({ onHide: () => {} });
 
-export function Modal({ visible, onHide, size = "medium", children }: ModalProps) {
+// Create Header component first
+function ModalHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="px-6 py-4 border-b border-gray-200 relative flex items-center justify-between">
+      {children}
+    </div>
+  );
+}
+
+// Create Header.Title component
+ModalHeader.Title = function ModalHeaderTitle({ children }: { children: React.ReactNode }) {
+  return <div className="text-xl font-semibold text-gray-900">{children}</div>;
+};
+
+// Create Header.CloseButton component
+ModalHeader.CloseButton = function ModalHeaderCloseButton({ onClick }: { onClick?: () => void }) {
+  const { onHide } = React.useContext(ModalContext);
+  const handleClick = onClick || onHide;
+  
+  return (
+    <button
+      onClick={handleClick}
+      className="text-gray-400 hover:text-gray-600 text-2xl leading-none w-8 h-8 flex items-center justify-center"
+      aria-label="Close"
+    >
+      ×
+    </button>
+  );
+};
+
+// Create Content component
+function ModalContent({ children }: { children: React.ReactNode }) {
+  return <div className="flex-1 p-6 overflow-y-auto">{children}</div>;
+}
+
+// Main Modal component
+function Modal({ visible, onHide, size = "medium", children }: ModalProps) {
   if (!visible) return null;
 
   return (
@@ -35,35 +71,8 @@ export function Modal({ visible, onHide, size = "medium", children }: ModalProps
   );
 }
 
-// Modal sub-components to match Phenom API
-Modal.Header = function ModalHeader({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="px-6 py-4 border-b border-gray-200 relative flex items-center justify-between">
-      {children}
-    </div>
-  );
-};
+// Attach nested components
+Modal.Header = ModalHeader;
+Modal.Content = ModalContent;
 
-Modal.Header.Title = function ModalHeaderTitle({ children }: { children: React.ReactNode }) {
-  return <div className="text-xl font-semibold text-gray-900">{children}</div>;
-};
-
-Modal.Header.CloseButton = function ModalHeaderCloseButton({ onClick }: { onClick?: () => void }) {
-  const { onHide } = React.useContext(ModalContext);
-  const handleClick = onClick || onHide;
-  
-  return (
-    <button
-      onClick={handleClick}
-      className="text-gray-400 hover:text-gray-600 text-2xl leading-none w-8 h-8 flex items-center justify-center"
-      aria-label="Close"
-    >
-      ×
-    </button>
-  );
-};
-
-Modal.Content = function ModalContent({ children }: { children: React.ReactNode }) {
-  return <div className="flex-1 p-6 overflow-y-auto">{children}</div>;
-};
-
+export { Modal };

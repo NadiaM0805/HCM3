@@ -5,7 +5,7 @@ import React from "react";
 export interface ButtonProps {
   buttonType?: "primary" | "secondary" | "neutral";
   label: string;
-  onClick?: () => void;
+  onClick?: (e?: any) => void; // Accept any event type for flexibility
   onFocus?: () => void;
   onMouseEnter?: () => void;
   size?: "small" | "medium" | "large";

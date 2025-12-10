@@ -100,6 +100,7 @@ declare module "@phenom/react-ds/snackbar" {
 }
 
 declare module "@phenom/react-ds/styles" {
-  // Styles module - no exports needed
+  // Styles module - no exports needed, no longer used
+  // This declaration is kept for backwards compatibility but the module is not imported
 }
 
