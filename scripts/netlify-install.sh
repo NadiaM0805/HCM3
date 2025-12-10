@@ -20,29 +20,32 @@ cat > node_modules/@phenom/react-ds/package.json << 'EOF'
 EOF
 
 # Create TypeScript stub files that Next.js can compile
-# These use ES module syntax and import from the fallbacks
-cat > node_modules/@phenom/react-ds/button.tsx << 'EOF'
-export { Button } from '../../components/ui/fallbacks';
+# Use absolute path from project root to avoid case-sensitivity issues
+PROJECT_ROOT=$(pwd)
+
+# Create stub files that use the @/ alias (configured in tsconfig.json)
+cat > node_modules/@phenom/react-ds/button.tsx << EOF
+export { Button } from '@/components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/badge.tsx << 'EOF'
-export { Badge } from '../../components/ui/fallbacks';
+cat > node_modules/@phenom/react-ds/badge.tsx << EOF
+export { Badge } from '@/components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/card.tsx << 'EOF'
-export { Card } from '../../components/ui/fallbacks';
+cat > node_modules/@phenom/react-ds/card.tsx << EOF
+export { Card } from '@/components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/snackbar.tsx << 'EOF'
-export { Snackbar, toast } from '../../components/ui/fallbacks';
+cat > node_modules/@phenom/react-ds/snackbar.tsx << EOF
+export { Snackbar, toast } from '@/components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/modal.tsx << 'EOF'
-export { Modal } from '../../components/ui/fallbacks';
+cat > node_modules/@phenom/react-ds/modal.tsx << EOF
+export { Modal } from '@/components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/progressbar.tsx << 'EOF'
-export { ProgressBar } from '../../components/ui/fallbacks';
+cat > node_modules/@phenom/react-ds/progressbar.tsx << EOF
+export { ProgressBar } from '@/components/ui/fallbacks';
 EOF
 
 cat > node_modules/@phenom/react-ds/styles.js << 'EOF'
