@@ -10,10 +10,7 @@ npm install --legacy-peer-deps
 echo "Creating @phenom/react-ds stub modules..."
 mkdir -p node_modules/@phenom/react-ds
 
-# Get the project root (where package.json is)
-PROJECT_ROOT=$(pwd)
-
-# Create stub modules that re-export from fallbacks
+# Create stub modules that re-export from fallbacks using static paths
 cat > node_modules/@phenom/react-ds/package.json << 'EOF'
 {
   "name": "@phenom/react-ds",
@@ -22,50 +19,30 @@ cat > node_modules/@phenom/react-ds/package.json << 'EOF'
 }
 EOF
 
-cat > node_modules/@phenom/react-ds/button.js << EOF
-const path = require('path');
-const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
-module.exports = { Button: fallbacks.Button };
-module.exports.Button = fallbacks.Button;
+# Create TypeScript stub files that Next.js can compile
+# These use ES module syntax and import from the fallbacks
+cat > node_modules/@phenom/react-ds/button.tsx << 'EOF'
+export { Button } from '../../components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/badge.js << EOF
-const path = require('path');
-const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
-module.exports = { Badge: fallbacks.Badge };
-module.exports.Badge = fallbacks.Badge;
+cat > node_modules/@phenom/react-ds/badge.tsx << 'EOF'
+export { Badge } from '../../components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/card.js << EOF
-const path = require('path');
-const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
-module.exports = { Card: fallbacks.Card };
-module.exports.Card = fallbacks.Card;
+cat > node_modules/@phenom/react-ds/card.tsx << 'EOF'
+export { Card } from '../../components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/snackbar.js << EOF
-const path = require('path');
-const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
-module.exports = { 
-  Snackbar: fallbacks.Snackbar,
-  toast: fallbacks.toast 
-};
-module.exports.Snackbar = fallbacks.Snackbar;
-module.exports.toast = fallbacks.toast;
+cat > node_modules/@phenom/react-ds/snackbar.tsx << 'EOF'
+export { Snackbar, toast } from '../../components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/modal.js << EOF
-const path = require('path');
-const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
-module.exports = { Modal: fallbacks.Modal };
-module.exports.Modal = fallbacks.Modal;
+cat > node_modules/@phenom/react-ds/modal.tsx << 'EOF'
+export { Modal } from '../../components/ui/fallbacks';
 EOF
 
-cat > node_modules/@phenom/react-ds/progressbar.js << EOF
-const path = require('path');
-const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
-module.exports = { ProgressBar: fallbacks.ProgressBar };
-module.exports.ProgressBar = fallbacks.ProgressBar;
+cat > node_modules/@phenom/react-ds/progressbar.tsx << 'EOF'
+export { ProgressBar } from '../../components/ui/fallbacks';
 EOF
 
 cat > node_modules/@phenom/react-ds/styles.js << 'EOF'
