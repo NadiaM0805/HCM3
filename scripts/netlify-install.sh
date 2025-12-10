@@ -64,7 +64,7 @@ cat > node_modules/@phenom/react-ds/index.js << 'EOF'
 module.exports = require('./button');
 EOF
 
-# Create TypeScript declaration file for Modal to ensure nested components are recognized
+# Create TypeScript declaration files for nested component structures
 cat > node_modules/@phenom/react-ds/modal.d.ts << 'EOF'
 import React from 'react';
 
@@ -100,6 +100,33 @@ interface ModalComponent extends React.FC<ModalProps> {
 }
 
 export const Modal: ModalComponent;
+EOF
+
+# Create TypeScript declaration for Card nested components
+cat > node_modules/@phenom/react-ds/card.d.ts << 'EOF'
+import React from 'react';
+
+export interface CardProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+interface CardHeaderProps {
+  title: string;
+  description?: string;
+}
+
+interface CardContentProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+interface CardComponent extends React.FC<CardProps> {
+  Header: React.FC<CardHeaderProps>;
+  Content: React.FC<CardContentProps>;
+}
+
+export const Card: CardComponent;
 EOF
 
 echo "✓ Stub modules created"

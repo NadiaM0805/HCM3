@@ -16,6 +16,7 @@ const poppins = Poppins({
   subsets: ["latin"],
   variable: "--font-poppins",
   display: "swap",
+  fallback: ["system-ui", "arial"], // Fallback fonts in case Google Fonts fails
 });
 
 export const metadata: Metadata = {
