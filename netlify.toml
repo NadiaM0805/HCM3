@@ -4,6 +4,9 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # Environment variables for private registries should be set in Netlify UI:
+  # NPM_TOKEN - for @phenom packages
+  # FONTAWESOME_NPM_AUTH_TOKEN - for Font Awesome Pro packages
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
