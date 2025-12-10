@@ -47,14 +47,10 @@ export { toast } from './fallbacks';
 EOF
 
 # Create modal stub - import and re-export to preserve nested structure
-# TypeScript needs to see the nested components, so we import and assign
+# The nested components are attached in fallbacks.tsx, we just need to re-export
 cat > node_modules/@phenom/react-ds/modal.tsx << 'EOF'
-import { Modal as FallbackModal } from './fallbacks';
-
-// Re-export Modal - the nested components (Header, Header.Title, etc.) 
-// are already attached to the function in fallbacks.tsx
-const Modal = FallbackModal;
-export { Modal };
+// Re-export Modal with all nested components preserved
+export { Modal } from './fallbacks';
 EOF
 
 cat > node_modules/@phenom/react-ds/progressbar.tsx << 'EOF'
@@ -70,27 +66,9 @@ cat > node_modules/@phenom/react-ds/index.js << 'EOF'
 module.exports = require('./button');
 EOF
 
-# Create TypeScript declaration files for nested component structures
-# This must match the actual structure in fallbacks.tsx
-cat > node_modules/@phenom/react-ds/modal.d.ts << 'EOF'
-import React from 'react';
-
-export interface ModalProps {
-  visible: boolean;
-  onHide: () => void;
-  size?: "small" | "medium" | "large";
-  children: React.ReactNode;
-}
-
-// Declare the nested component structure exactly as it exists in fallbacks.tsx
-export declare const Modal: React.FC<ModalProps> & {
-  Header: React.FC<{ children: React.ReactNode }> & {
-    Title: React.FC<{ children: React.ReactNode }>;
-    CloseButton: React.FC<{ onClick?: () => void }>;
-  };
-  Content: React.FC<{ children: React.ReactNode }>;
-};
-EOF
+# Note: Type declarations are in types/phenom-react-ds.d.ts
+# We don't need a separate .d.ts file here since the types are already declared
+# The modal.tsx file just needs to export the actual component with nested structure
 
 # Create TypeScript declaration for Card nested components
 cat > node_modules/@phenom/react-ds/card.d.ts << 'EOF'
