@@ -8,3 +8,4 @@ registry=https://pie-nexus.phenompro.com/repository/pie-npm-group
 //npm.fontawesome.com/:_authToken=${FONTAWESOME_NPM_AUTH_TOKEN}
 
 loglevel=verbose
+
