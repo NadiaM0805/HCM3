@@ -78,9 +78,9 @@ EOF
 
 echo "✓ Stub modules created"
 
-# Now install dependencies, skipping optional ones to avoid timeout
-echo "Installing other dependencies..."
-npm install --legacy-peer-deps --no-optional
+# Now install dependencies (stubs already exist, so npm won't try to fetch @phenom/react-ds)
+echo "Installing dependencies..."
+npm install --legacy-peer-deps
 
 echo "✓ Dependencies ready"
 
