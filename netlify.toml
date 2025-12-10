@@ -1,0 +1,12 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_TOKEN = "dGVhbS5zZXJ2aWNlaHViQHBoZW5vbXBlb3BsZS5jb206U2VydmljZWh1YjEyMw=="
+  FONTAWESOME_NPM_AUTH_TOKEN = "994BC836-8EC8-472C-A777-593031E0E9E2"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
