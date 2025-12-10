@@ -1,9 +1,15 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
-import "@phenom/react-ds/styles";
+// Conditionally import Phenom styles
+let PhenomStyles: any;
+try {
+  PhenomStyles = require("@phenom/react-ds/styles");
+} catch {
+  // Styles not available, will use fallback components
+}
 import { RoleProvider } from "@/contexts/RoleContext";
-import { Snackbar } from "@phenom/react-ds/snackbar";
+import { Snackbar } from "@/components/ui/fallbacks";
 
 const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],

@@ -1,5 +1,5 @@
 [build]
-  command = "npm run build"
+  command = "bash scripts/netlify-install.sh && npm run build"
   publish = ".next"
 
 [build.environment]
@@ -7,6 +7,7 @@
   # Environment variables for private registries should be set in Netlify UI:
   # NPM_TOKEN - for @phenom packages
   # FONTAWESOME_NPM_AUTH_TOKEN - for Font Awesome Pro packages
+  # Note: If @phenom/react-ds cannot be installed, the app will use fallback components
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
