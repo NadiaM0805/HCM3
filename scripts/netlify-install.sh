@@ -1,34 +1,65 @@
 #!/bin/bash
 # Custom install script for Netlify that continues even if @phenom/react-ds fails
 
+set +e  # Don't exit on error
+
 echo "Installing dependencies..."
 
-# Install dependencies, but continue even if optional ones fail
-npm install --legacy-peer-deps 2>&1 | grep -v "@phenom/react-ds" || true
+# Try to install all dependencies
+npm install --legacy-peer-deps
 
-# If @phenom/react-ds failed to install, create stub modules
+# Check if @phenom/react-ds was installed
 if [ ! -d "node_modules/@phenom/react-ds" ]; then
-  echo "⚠ @phenom/react-ds not available, creating stub modules..."
+  echo "⚠ @phenom/react-ds not available (private registry unreachable)"
+  echo "  Creating stub modules to prevent import errors..."
+  
+  # Create stub directory structure
   mkdir -p node_modules/@phenom/react-ds
-  cat > node_modules/@phenom/react-ds/button.js << 'EOF'
-module.exports = { Button: require('../../components/ui/fallbacks').Button };
+  
+  # Get the project root (where package.json is)
+  PROJECT_ROOT=$(pwd)
+  
+  # Create stub modules that re-export from fallbacks
+  # Use absolute paths to avoid module resolution issues
+  cat > node_modules/@phenom/react-ds/button.js << EOF
+const path = require('path');
+const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
+module.exports = { Button: fallbacks.Button };
+module.exports.Button = fallbacks.Button;
 EOF
-  cat > node_modules/@phenom/react-ds/badge.js << 'EOF'
-module.exports = { Badge: require('../../components/ui/fallbacks').Badge };
+
+  cat > node_modules/@phenom/react-ds/badge.js << EOF
+const path = require('path');
+const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
+module.exports = { Badge: fallbacks.Badge };
+module.exports.Badge = fallbacks.Badge;
 EOF
-  cat > node_modules/@phenom/react-ds/card.js << 'EOF'
-module.exports = { Card: require('../../components/ui/fallbacks').Card };
+
+  cat > node_modules/@phenom/react-ds/card.js << EOF
+const path = require('path');
+const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
+module.exports = { Card: fallbacks.Card };
+module.exports.Card = fallbacks.Card;
 EOF
-  cat > node_modules/@phenom/react-ds/snackbar.js << 'EOF'
-const fallbacks = require('../../components/ui/fallbacks');
+
+  cat > node_modules/@phenom/react-ds/snackbar.js << EOF
+const path = require('path');
+const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
 module.exports = { 
   Snackbar: fallbacks.Snackbar,
   toast: fallbacks.toast 
 };
+module.exports.Snackbar = fallbacks.Snackbar;
+module.exports.toast = fallbacks.toast;
 EOF
+
   cat > node_modules/@phenom/react-ds/styles.js << 'EOF'
-// Stub styles file
+// Stub styles - no styles needed for fallback components
 EOF
+
+  echo "✓ Stub modules created"
+else
+  echo "✓ @phenom/react-ds installed successfully"
 fi
 
 echo "✓ Dependencies ready"
