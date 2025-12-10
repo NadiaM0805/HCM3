@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Button } from "@phenom/react-ds/button";
-import { Badge } from "@phenom/react-ds/badge";
+import { Button } from "@/components/design-system/Button";
+import { Badge } from "@/components/design-system/Badge";
 import type { PlanLine } from "@/types/planLine";
 
 type DraftHeadcountPlanTableProps = {

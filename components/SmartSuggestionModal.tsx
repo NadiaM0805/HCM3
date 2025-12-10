@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { CustomModal } from "@/components/ui/CustomModal";
-import { Button } from "@phenom/react-ds/button";
+import { Button } from "@/components/design-system/Button";
 
 interface SmartSuggestionModalProps {
   isOpen: boolean;

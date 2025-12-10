@@ -1,5 +1,5 @@
-import { Badge } from "@phenom/react-ds/badge";
-import { Card } from "@phenom/react-ds/card";
+import { Badge } from "@/components/design-system/Badge";
+import { Card } from "@/components/design-system/Card";
 
 interface AllocationRow {
   businessUnit: string;

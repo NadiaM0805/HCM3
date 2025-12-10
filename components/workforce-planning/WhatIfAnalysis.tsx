@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@phenom/react-ds/card";
-import { Button } from "@phenom/react-ds/button";
+import { Card } from "@/components/design-system/Card";
+import { Button } from "@/components/design-system/Button";
 import { cn } from "@/lib/utils";
 
 type SimulationResult = {

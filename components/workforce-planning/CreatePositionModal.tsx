@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { CustomModal } from "@/components/ui/CustomModal";
-import { Button } from "@phenom/react-ds/button";
+import { Button } from "@/components/design-system/Button";
 
 interface CreatePositionModalProps {
   isOpen: boolean;

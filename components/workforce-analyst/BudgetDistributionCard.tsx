@@ -1,4 +1,4 @@
-import { ProgressBar } from "@phenom/react-ds/progressbar";
+import { ProgressBar } from "@/components/design-system/ProgressBar";
 
 interface BudgetItem {
   label: string;

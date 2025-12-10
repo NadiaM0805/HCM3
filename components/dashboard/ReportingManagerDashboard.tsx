@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@phenom/react-ds/button";
-import { Badge } from "@phenom/react-ds/badge";
+import { Button } from "@/components/design-system/Button";
+import { Badge } from "@/components/design-system/Badge";
 import { CustomModal } from "@/components/ui/CustomModal";
-import { toast } from "@phenom/react-ds/snackbar";
+import { toast } from "@/components/design-system/Snackbar";
 import { useRole } from "@/contexts/RoleContext";
 import { SmartSuggestionModal } from "@/components/SmartSuggestionModal";
 

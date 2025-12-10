@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@phenom/react-ds/button";
+import { Button } from "@/components/design-system/Button";
 
 interface KPICardProps {
   icon: React.ReactNode;

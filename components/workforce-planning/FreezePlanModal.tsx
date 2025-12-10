@@ -1,7 +1,7 @@
 "use client";
 
 import { CustomModal } from "@/components/ui/CustomModal";
-import { Button } from "@phenom/react-ds/button";
+import { Button } from "@/components/design-system/Button";
 import type { PlanLine } from "@/types/planLine";
 
 interface FreezePlanModalProps {

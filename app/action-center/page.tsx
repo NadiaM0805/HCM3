@@ -1,8 +1,8 @@
 "use client";
 
 import { AppLayout } from "@/components/layout/AppLayout";
-import { Button } from "@phenom/react-ds/button";
-import { toast } from "@phenom/react-ds/snackbar";
+import { Button } from "@/components/design-system/Button";
+import { toast } from "@/components/design-system/Snackbar";
 
 interface ApprovalCardProps {
   title: string;

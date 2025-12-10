@@ -1,7 +1,7 @@
 "use client";
 
 import { CustomModal } from "@/components/ui/CustomModal";
-import { Button } from "@phenom/react-ds/button";
+import { Button } from "@/components/design-system/Button";
 
 interface CreatePositionsConfirmModalProps {
   isOpen: boolean;

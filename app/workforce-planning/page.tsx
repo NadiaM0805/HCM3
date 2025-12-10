@@ -3,9 +3,9 @@
 import { useState } from "react";
 import Image from "next/image";
 import { AppLayout } from "@/components/layout/AppLayout";
-import { Button } from "@phenom/react-ds/button";
-import { Badge } from "@phenom/react-ds/badge";
-import { Card } from "@phenom/react-ds/card";
+import { Button } from "@/components/design-system/Button";
+import { Badge } from "@/components/design-system/Badge";
+import { Card } from "@/components/design-system/Card";
 import { ScenarioCard } from "@/components/workforce-planning/ScenarioCard";
 import { WhatIfAnalysis } from "@/components/workforce-planning/WhatIfAnalysis";
 import { DraftHeadcountPlanTable } from "@/components/workforce-planning/DraftHeadcountPlanTable";
@@ -14,7 +14,7 @@ import { CreatePositionsConfirmModal } from "@/components/workforce-planning/Cre
 import { CreatePositionModal } from "@/components/workforce-planning/CreatePositionModal";
 import { BudgetApprovalModal } from "@/components/workforce-planning/BudgetApprovalModal";
 import { useRole } from "@/contexts/RoleContext";
-import { toast } from "@phenom/react-ds/snackbar";
+import { toast } from "@/components/design-system/Snackbar";
 import type { PlanLine } from "@/types/planLine";
 import { MOCK_PLAN_LINES } from "@/types/planLine";
 

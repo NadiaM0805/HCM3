@@ -47,10 +47,19 @@ export { toast } from './fallbacks';
 EOF
 
 # Create modal stub - import and re-export to preserve nested structure
-# The nested components are attached in fallbacks.tsx, we just need to re-export
+# The nested components are attached in fallbacks.tsx
 cat > node_modules/@phenom/react-ds/modal.tsx << 'EOF'
-// Re-export Modal with all nested components preserved
-export { Modal } from './fallbacks';
+import { Modal as FallbackModal } from './fallbacks';
+
+// Export Modal - nested components (Header, Header.Title, etc.) are preserved
+// TypeScript will use the declaration from types/phenom-react-ds.d.ts
+export const Modal = FallbackModal;
+EOF
+
+# Create a .d.ts file to ensure TypeScript sees the nested structure
+cat > node_modules/@phenom/react-ds/modal.d.ts << 'EOF'
+// Re-export types to ensure TypeScript recognizes the nested Modal structure
+export * from './fallbacks';
 EOF
 
 cat > node_modules/@phenom/react-ds/progressbar.tsx << 'EOF'

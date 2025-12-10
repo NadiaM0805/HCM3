@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@phenom/react-ds/button";
+import { Button } from "@/components/design-system/Button";
 import type { Objective, KeyResult } from "@/types/objectives";
 
 interface ObjectiveCardProps {

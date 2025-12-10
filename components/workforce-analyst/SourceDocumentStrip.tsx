@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@phenom/react-ds/button";
-import { Badge } from "@phenom/react-ds/badge";
+import { Button } from "@/components/design-system/Button";
+import { Badge } from "@/components/design-system/Badge";
 
 interface SourceDocumentStripProps {
   fileName: string;

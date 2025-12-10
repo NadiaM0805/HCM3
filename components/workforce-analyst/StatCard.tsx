@@ -1,4 +1,4 @@
-import { Badge } from "@phenom/react-ds/badge";
+import { Badge } from "@/components/design-system/Badge";
 
 interface StatCardProps {
   label: string;

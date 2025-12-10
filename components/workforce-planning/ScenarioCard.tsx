@@ -1,6 +1,6 @@
 "use client";
 
-import { Card } from "@phenom/react-ds/card";
+import { Card } from "@/components/design-system/Card";
 import { cn } from "@/lib/utils";
 
 interface ScenarioCardProps {

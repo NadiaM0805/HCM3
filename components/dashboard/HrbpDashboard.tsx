@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@phenom/react-ds/button";
-import { Badge } from "@phenom/react-ds/badge";
+import { Button } from "@/components/design-system/Button";
+import { Badge } from "@/components/design-system/Badge";
 import { useRole } from "@/contexts/RoleContext";
 
 interface KPITileProps {
