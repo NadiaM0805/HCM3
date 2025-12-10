@@ -1,11 +1,12 @@
 #!/bin/bash
-# Custom install script for Netlify that skips unreachable private registry
+# Custom install script for Netlify that creates stubs AFTER npm install
 
 set +e  # Don't exit on error
 
-echo "Installing dependencies (skipping optional @phenom/react-ds to avoid timeout)..."
+echo "Installing dependencies..."
+npm install --legacy-peer-deps
 
-# Create stub modules FIRST to prevent npm from trying to fetch the package
+# Create stub modules AFTER npm install (so npm doesn't remove them)
 echo "Creating @phenom/react-ds stub modules..."
 mkdir -p node_modules/@phenom/react-ds
 
@@ -77,10 +78,5 @@ module.exports = require('./button');
 EOF
 
 echo "✓ Stub modules created"
-
-# Now install dependencies (stubs already exist, so npm won't try to fetch @phenom/react-ds)
-echo "Installing dependencies..."
-npm install --legacy-peer-deps
-
 echo "✓ Dependencies ready"
 
