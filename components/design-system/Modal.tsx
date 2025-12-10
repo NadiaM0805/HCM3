@@ -28,12 +28,12 @@ function ModalHeader({ children }: { children: React.ReactNode }) {
 }
 
 // Create Header.Title component
-ModalHeader.Title = function ModalHeaderTitle({ children }: { children: React.ReactNode }) {
+function ModalHeaderTitle({ children }: { children: React.ReactNode }) {
   return <div className="text-xl font-semibold text-gray-900">{children}</div>;
-};
+}
 
 // Create Header.CloseButton component
-ModalHeader.CloseButton = function ModalHeaderCloseButton({ onClick }: { onClick?: () => void }) {
+function ModalHeaderCloseButton({ onClick }: { onClick?: () => void }) {
   const context = React.useContext(ModalContext);
   const handleClick = onClick || (context?.onHide || (() => {}));
   
@@ -46,7 +46,11 @@ ModalHeader.CloseButton = function ModalHeaderCloseButton({ onClick }: { onClick
       ×
     </button>
   );
-};
+}
+
+// Attach nested components to Header
+ModalHeader.Title = ModalHeaderTitle;
+ModalHeader.CloseButton = ModalHeaderCloseButton;
 
 // Create Content component
 function ModalContent({ children }: { children: React.ReactNode }) {
@@ -54,7 +58,7 @@ function ModalContent({ children }: { children: React.ReactNode }) {
 }
 
 // Main Modal component
-function Modal({ visible, onHide, size = "medium", children }: ModalProps) {
+function ModalComponent({ visible, onHide, size = "medium", children }: ModalProps) {
   if (!visible) return null;
 
   return (
@@ -71,8 +75,18 @@ function Modal({ visible, onHide, size = "medium", children }: ModalProps) {
   );
 }
 
-// Attach nested components
-Modal.Header = ModalHeader;
-Modal.Content = ModalContent;
+// Define the type with nested components
+interface ModalComponentType extends React.FC<ModalProps> {
+  Header: React.FC<{ children: React.ReactNode }> & {
+    Title: React.FC<{ children: React.ReactNode }>;
+    CloseButton: React.FC<{ onClick?: () => void }>;
+  };
+  Content: React.FC<{ children: React.ReactNode }>;
+}
 
-export { Modal };
+// Attach nested components and cast to proper type
+(ModalComponent as any).Header = ModalHeader;
+(ModalComponent as any).Content = ModalContent;
+
+// Export with proper typing
+export const Modal = ModalComponent as ModalComponentType;
