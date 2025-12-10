@@ -45,20 +45,10 @@ cat > node_modules/@phenom/react-ds/snackbar.tsx << 'EOF'
 export { Snackbar, toast } from './fallbacks';
 EOF
 
-# Create modal stub with proper TypeScript types for nested components
+# Create modal stub - re-export everything to preserve nested structure
 cat > node_modules/@phenom/react-ds/modal.tsx << 'EOF'
-import { Modal as FallbackModal, ModalProps } from './fallbacks';
-
-// Re-export with proper typing to preserve nested component structure
-export const Modal = FallbackModal as typeof FallbackModal & {
-  Header: typeof FallbackModal.Header & {
-    Title: typeof FallbackModal.Header.Title;
-    CloseButton: typeof FallbackModal.Header.CloseButton;
-  };
-  Content: typeof FallbackModal.Content;
-};
-
-export type { ModalProps };
+// Re-export Modal and all its nested components
+export { Modal, type ModalProps } from './fallbacks';
 EOF
 
 cat > node_modules/@phenom/react-ds/progressbar.tsx << 'EOF'
@@ -72,6 +62,44 @@ EOF
 cat > node_modules/@phenom/react-ds/index.js << 'EOF'
 // Main entry point
 module.exports = require('./button');
+EOF
+
+# Create TypeScript declaration file for Modal to ensure nested components are recognized
+cat > node_modules/@phenom/react-ds/modal.d.ts << 'EOF'
+import React from 'react';
+
+export interface ModalProps {
+  visible: boolean;
+  onHide: () => void;
+  size?: "small" | "medium" | "large";
+  children: React.ReactNode;
+}
+
+interface ModalHeaderProps {
+  children: React.ReactNode;
+}
+
+interface ModalHeaderTitleProps {
+  children: React.ReactNode;
+}
+
+interface ModalHeaderCloseButtonProps {
+  onClick?: () => void;
+}
+
+interface ModalContentProps {
+  children: React.ReactNode;
+}
+
+interface ModalComponent extends React.FC<ModalProps> {
+  Header: React.FC<ModalHeaderProps> & {
+    Title: React.FC<ModalHeaderTitleProps>;
+    CloseButton: React.FC<ModalHeaderCloseButtonProps>;
+  };
+  Content: React.FC<ModalContentProps>;
+}
+
+export const Modal: ModalComponent;
 EOF
 
 echo "✓ Stub modules created"
