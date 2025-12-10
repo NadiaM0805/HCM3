@@ -169,13 +169,21 @@ const sizeMap = {
   large: "w-[800px]",
 };
 
+// Create a context to pass onHide to child components
+const ModalContext = React.createContext<{ onHide: () => void }>({ onHide: () => {} });
+
 export function Modal({ visible, onHide, size = "medium", children }: ModalProps) {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className={`${sizeMap[size]} max-w-[90vw] relative bg-white rounded-lg shadow-xl flex flex-col max-h-[90vh]`}>
-        {children}
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={onHide}>
+      <div
+        className={`${sizeMap[size]} max-w-[90vw] relative bg-white rounded-lg shadow-xl flex flex-col max-h-[90vh]`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <ModalContext.Provider value={{ onHide }}>
+          {children}
+        </ModalContext.Provider>
       </div>
     </div>
   );
@@ -195,9 +203,12 @@ Modal.Header.Title = function ModalHeaderTitle({ children }: { children: React.R
 };
 
 Modal.Header.CloseButton = function ModalHeaderCloseButton({ onClick }: { onClick?: () => void }) {
+  const { onHide } = React.useContext(ModalContext);
+  const handleClick = onClick || onHide;
+  
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       className="text-gray-400 hover:text-gray-600 text-2xl leading-none w-8 h-8 flex items-center justify-center"
       aria-label="Close"
     >
