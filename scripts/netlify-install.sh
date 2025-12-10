@@ -48,7 +48,8 @@ EOF
 # Create modal stub - re-export everything to preserve nested structure
 cat > node_modules/@phenom/react-ds/modal.tsx << 'EOF'
 // Re-export Modal and all its nested components
-export { Modal, type ModalProps } from './fallbacks';
+export { Modal } from './fallbacks';
+export type { ModalProps } from './fallbacks';
 EOF
 
 cat > node_modules/@phenom/react-ds/progressbar.tsx << 'EOF'
