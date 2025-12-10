@@ -53,6 +53,20 @@ module.exports.Snackbar = fallbacks.Snackbar;
 module.exports.toast = fallbacks.toast;
 EOF
 
+  cat > node_modules/@phenom/react-ds/modal.js << EOF
+const path = require('path');
+const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
+module.exports = { Modal: fallbacks.Modal };
+module.exports.Modal = fallbacks.Modal;
+EOF
+
+  cat > node_modules/@phenom/react-ds/progressbar.js << EOF
+const path = require('path');
+const fallbacks = require(path.join('${PROJECT_ROOT}', 'components', 'ui', 'fallbacks'));
+module.exports = { ProgressBar: fallbacks.ProgressBar };
+module.exports.ProgressBar = fallbacks.ProgressBar;
+EOF
+
   cat > node_modules/@phenom/react-ds/styles.js << 'EOF'
 // Stub styles - no styles needed for fallback components
 EOF
