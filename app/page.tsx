@@ -46,7 +46,7 @@ function WorkforceAnalystView() {
   );
 
   return (
-    <>
+    <div data-persona-view="analyst">
       <div className="space-y-6">
         {/* Welcome Header */}
         <WelcomeHeader />
@@ -92,7 +92,7 @@ function WorkforceAnalystView() {
           <StrategyUploadPanel status="awaiting" />
         </Modal.Content>
       </Modal>
-    </>
+    </div>
   );
 }
 
@@ -113,7 +113,7 @@ function BULeaderView() {
     agenticMode ? buLeaderFlow : [],
     { agentChat: sendMessage }
   );
-  
+
   const [objectives, setObjectives] = useState<Objective[]>([
     {
       id: "obj-1",
@@ -195,7 +195,8 @@ function BULeaderView() {
   };
 
   return (
-    <div className="space-y-6">
+    <div data-persona-view="bu-leader">
+      <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-semibold text-gray-900">Goal Definition Canvas</h1>
         <p className="text-sm text-gray-600 mt-1">Define objectives and key results for your business unit</p>
@@ -285,13 +286,18 @@ function BULeaderView() {
           onDeleteObjective={handleDeleteObjective}
         />
       ))}
+      </div>
     </div>
   );
 }
 
 // HRBP View
 function HRBPView() {
-  return <HrbpDashboard />;
+  return (
+    <div data-persona-view="hrbp">
+      <HrbpDashboard />
+    </div>
+  );
 }
 
 // Reporting Manager View
@@ -312,7 +318,11 @@ function ReportingManagerView() {
     { agentChat: sendMessage }
   );
   
-  return <ReportingManagerDashboard />;
+  return (
+    <div data-persona-view="manager">
+      <ReportingManagerDashboard />
+    </div>
+  );
 }
 
 // Main Dashboard Component

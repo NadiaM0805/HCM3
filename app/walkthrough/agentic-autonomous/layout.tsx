@@ -25,7 +25,9 @@ export default function AgenticLayout({ children }: { children: React.ReactNode 
   return (
     <AgenticContext.Provider value={{ agenticMode, setAgenticMode }}>
       <CursorProvider>
-        {children}
+        <div data-agentic-layout="true">
+          {children}
+        </div>
         <CursorOverlay />
       </CursorProvider>
     </AgenticContext.Provider>
