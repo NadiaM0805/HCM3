@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 interface SidebarProps {
@@ -77,9 +78,11 @@ export function Sidebar({ currentPage }: SidebarProps) {
           className="flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-200 hover:bg-slate-50"
           aria-label="Go to home"
         >
-          <img
+          <Image
             src="/logo.svg"
             alt="Home"
+            width={24}
+            height={24}
             className="w-6 h-6"
             style={{ width: '24px', height: '24px', display: 'block' }}
           />
