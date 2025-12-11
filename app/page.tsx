@@ -24,12 +24,20 @@ import { useAgenticOrchestrator } from "@/hooks/useAgenticOrchestrator";
 import { analystFlow } from "@/agenticFlows/analystFlow";
 import { buLeaderFlow } from "@/agenticFlows/buLeaderFlow";
 import { managerFlow } from "@/agenticFlows/managerFlow";
+import { useEffect } from "react";
 
 // Workforce Analyst View
 function WorkforceAnalystView() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const { agenticMode } = useAgentic();
-  const { sendMessage } = useAgentChat();
+  const { sendMessage, resetChat } = useAgentChat();
+  
+  // Reset chat when this persona view mounts in agentic mode
+  useEffect(() => {
+    if (agenticMode) {
+      resetChat();
+    }
+  }, [agenticMode, resetChat]);
   
   // Integrate orchestrator for Analyst flow
   useAgenticOrchestrator(
@@ -91,7 +99,14 @@ function WorkforceAnalystView() {
 // BU Leader View
 function BULeaderView() {
   const { agenticMode } = useAgentic();
-  const { sendMessage } = useAgentChat();
+  const { sendMessage, resetChat } = useAgentChat();
+  
+  // Reset chat when this persona view mounts
+  useEffect(() => {
+    if (agenticMode) {
+      resetChat();
+    }
+  }, [agenticMode, resetChat]);
   
   // Integrate orchestrator for BU Leader flow
   useAgenticOrchestrator(
@@ -281,6 +296,22 @@ function HRBPView() {
 
 // Reporting Manager View
 function ReportingManagerView() {
+  const { agenticMode } = useAgentic();
+  const { sendMessage, resetChat } = useAgentChat();
+  
+  // Reset chat when this persona view mounts in agentic mode
+  useEffect(() => {
+    if (agenticMode) {
+      resetChat();
+    }
+  }, [agenticMode, resetChat]);
+  
+  // Integrate orchestrator for Manager flow
+  useAgenticOrchestrator(
+    agenticMode ? managerFlow : [],
+    { agentChat: sendMessage }
+  );
+  
   return <ReportingManagerDashboard />;
 }
 

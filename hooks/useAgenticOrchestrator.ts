@@ -18,6 +18,7 @@ export function useAgenticOrchestrator(
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [running, setRunning] = useState(false);
   const hasRunRef = useRef(false);
+  const stepsRef = useRef<string>(""); // Track steps to detect changes
 
   const { agentChat } = options;
 
@@ -51,12 +52,27 @@ export function useAgenticOrchestrator(
     setRunning(false);
   }
 
+  // Reset when steps change (persona switch)
+  useEffect(() => {
+    const stepsKey = steps.map(s => s.id).join(",");
+    if (stepsRef.current !== stepsKey && stepsKey !== "") {
+      hasRunRef.current = false;
+      setRunning(false);
+      setCurrentStep(0);
+      stepsRef.current = stepsKey;
+    }
+  }, [steps]);
+
   useEffect(() => {
     if (agenticMode && steps.length > 0 && !running && !hasRunRef.current) {
-      runSteps();
+      // Small delay to ensure chat is reset first
+      const timer = setTimeout(() => {
+        runSteps();
+      }, 100);
+      return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agenticMode, steps.length]);
+  }, [agenticMode, steps.length, stepsRef.current]);
 
   // Reset when agenticMode changes
   useEffect(() => {

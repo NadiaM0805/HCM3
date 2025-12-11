@@ -706,13 +706,26 @@ function Artifacts({
 export default function WorkforcePlanningPage() {
   const { currentRole } = useRole();
   const { agenticMode } = useAgentic();
-  const { messages: agentMessages, sendMessage } = useAgentChat();
+  const { messages: agentMessages, sendMessage, resetChat } = useAgentChat();
   const [activeTab, setActiveTab] = useState<"strategy" | "draft" | "playground">("strategy");
   const [draftPlanLines, setDraftPlanLines] = useState<PlanLine[]>([]);
   const [hasAgentDraft, setHasAgentDraft] = useState(false);
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [agentReasoning, setAgentReasoning] = useState<string | null>(null);
   const [isAssistantMinimized, setIsAssistantMinimized] = useState(!agenticMode);
+
+  // Reset chat when HRBP role is active in agentic mode
+  useEffect(() => {
+    if (currentRole === "HRBP" && agenticMode) {
+      resetChat();
+    }
+  }, [currentRole, agenticMode, resetChat]);
+
+  // Integrate orchestrator for HRBP flow
+  useAgenticOrchestrator(
+    currentRole === "HRBP" && agenticMode ? hrbpFlow : [],
+    { agentChat: sendMessage }
+  );
 
   // Modal states for the draft plan flow
   const [isFreezePlanOpen, setIsFreezePlanOpen] = useState(false);
