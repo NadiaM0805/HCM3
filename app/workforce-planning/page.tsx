@@ -14,6 +14,7 @@ import { CreatePositionsConfirmModal } from "@/components/workforce-planning/Cre
 import { CreatePositionModal } from "@/components/workforce-planning/CreatePositionModal";
 import { BudgetApprovalModal } from "@/components/workforce-planning/BudgetApprovalModal";
 import { useRole } from "@/contexts/RoleContext";
+import { useAgentic } from "@/contexts/AgenticContext";
 import { toast } from "@/components/design-system/Snackbar";
 import type { PlanLine } from "@/types/planLine";
 import { MOCK_PLAN_LINES } from "@/types/planLine";
@@ -28,6 +29,7 @@ interface PlanningWorkspaceProps {
   onMinimize: () => void;
   onMaximize: () => void;
   onViewDraftPlanAndMinimize?: () => void;
+  agenticMode?: boolean;
 }
 
 function PlanningWorkspace({
@@ -39,6 +41,7 @@ function PlanningWorkspace({
   onMinimize,
   onMaximize,
   onViewDraftPlanAndMinimize,
+  agenticMode = false,
 }: PlanningWorkspaceProps) {
   // Minimized view - floating icon
   if (isMinimized) {
@@ -139,29 +142,58 @@ function PlanningWorkspace({
               </>
             ) : (
               <>
-                <div className="text-sm text-[#353b46] leading-6">
-                  <p>
-                    I have loaded the high level strategy along with objectives, Key Results and budgets allocated.
-                  </p>
-                  <p className="mt-2">
-                    I can draft a headcount plan based on your strategy and budgets. I'll suggest roles, quantities, timing, and budget allocations.
-                  </p>
-                </div>
-                
-                {/* Agent Recommended Button */}
-                <div className="pt-2">
-                  <div
-                    onClick={onRunAgentHeadcount}
-                    className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-[#4d3ee0] inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors"
-                  >
-                    <div data-size="18" data-style="Regular" className="h-4 min-w-4 inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden">
-                      <Image src="/sparkle.svg" alt="Sparkle" width={16} height={16} className="w-4 h-4" />
+                {agenticMode ? (
+                  <>
+                    <div className="text-sm text-[#353b46] leading-6">
+                      <p className="font-semibold mb-2">Welcome to the Agentic Autonomous Workflow.</p>
+                      <p>
+                        I can execute the entire workflow on your behalf — analyzing strategy, generating headcount plans, and orchestrating tasks automatically.
+                      </p>
+                      <p className="mt-2">
+                        Would you like me to run this workflow for you?
+                      </p>
                     </div>
-                    <div className="justify-center text-[#4d3ee0] text-sm font-medium font-['Poppins'] leading-5 tracking-tight">
-                      Agent recommended headcount
+                    
+                    {/* Agentic Mode Button */}
+                    <div className="pt-2">
+                      <div
+                        onClick={onRunAgentHeadcount}
+                        className="w-full px-4 py-2.5 bg-amber-500 rounded-[10px] inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-amber-600 transition-colors"
+                      >
+                        <div data-size="18" data-style="Regular" className="h-4 min-w-4 inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden">
+                          <Image src="/sparkle.svg" alt="Sparkle" width={16} height={16} className="w-4 h-4" />
+                        </div>
+                        <div className="justify-center text-white text-sm font-medium font-['Poppins'] leading-5 tracking-tight">Yes, run the workflow</div>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-sm text-[#353b46] leading-6">
+                      <p>
+                        I have loaded the high level strategy along with objectives, Key Results and budgets allocated.
+                      </p>
+                      <p className="mt-2">
+                        I can draft a headcount plan based on your strategy and budgets. I'll suggest roles, quantities, timing, and budget allocations.
+                      </p>
+                    </div>
+                    
+                    {/* Agent Recommended Button */}
+                    <div className="pt-2">
+                      <div
+                        onClick={onRunAgentHeadcount}
+                        className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-[#4d3ee0] inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors"
+                      >
+                        <div data-size="18" data-style="Regular" className="h-4 min-w-4 inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden">
+                          <Image src="/sparkle.svg" alt="Sparkle" width={16} height={16} className="w-4 h-4" />
+                        </div>
+                        <div className="justify-center text-[#4d3ee0] text-sm font-medium font-['Poppins'] leading-5 tracking-tight">
+                          Agent recommended headcount
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
@@ -637,12 +669,13 @@ function Artifacts({
 // Main Workforce Planning Page
 export default function WorkforcePlanningPage() {
   const { currentRole } = useRole();
+  const { agenticMode } = useAgentic();
   const [activeTab, setActiveTab] = useState<"strategy" | "draft" | "playground">("strategy");
   const [draftPlanLines, setDraftPlanLines] = useState<PlanLine[]>([]);
   const [hasAgentDraft, setHasAgentDraft] = useState(false);
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [agentReasoning, setAgentReasoning] = useState<string | null>(null);
-  const [isAssistantMinimized, setIsAssistantMinimized] = useState(false);
+  const [isAssistantMinimized, setIsAssistantMinimized] = useState(!agenticMode); // Auto-open in agentic mode
 
   // Modal states for the draft plan flow
   const [isFreezePlanOpen, setIsFreezePlanOpen] = useState(false);
@@ -757,6 +790,7 @@ export default function WorkforcePlanningPage() {
               isMinimized={isAssistantMinimized}
               onMinimize={() => setIsAssistantMinimized(true)}
               onMaximize={() => setIsAssistantMinimized(false)}
+              agenticMode={agenticMode}
             />
           </div>
         ) : (
@@ -769,6 +803,7 @@ export default function WorkforcePlanningPage() {
             isMinimized={isAssistantMinimized}
             onMinimize={() => setIsAssistantMinimized(true)}
             onMaximize={() => setIsAssistantMinimized(false)}
+            agenticMode={agenticMode}
           />
         )}
       </div>

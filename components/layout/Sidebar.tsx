@@ -46,11 +46,21 @@ function ClipboardIcon({ className, active }: { className?: string; active?: boo
   );
 }
 
+function PlayIcon({ className, active }: { className?: string; active?: boolean }) {
+  const fillColor = active ? "#4d3ee0" : "#464F5E";
+  return (
+    <svg className={className} viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 14.5V5.5L14 10L8 14.5Z" fill={fillColor} />
+    </svg>
+  );
+}
+
 const navItems = [
   { href: "/", icon: HomeIcon, label: "Dashboard" },
   { href: "/workforce-planning", icon: UsersIcon, label: "Workforce Planning" },
   { href: "#", icon: ListIcon, label: "Playbooks" },
   { href: "/action-center", icon: ClipboardIcon, label: "Action Center" },
+  { href: "/walkthrough", icon: PlayIcon, label: "Walkthrough" },
 ];
 
 export function Sidebar({ currentPage }: SidebarProps) {
