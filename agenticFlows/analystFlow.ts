@@ -3,53 +3,57 @@ import { AgenticActions } from "@/types/agentic";
 export const analystFlow = [
   {
     id: "welcome",
-    label: "Checking your strategic inputs…",
+    label: "Checking strategy inputs…",
     action: async ({ agentChat }: AgenticActions) => {
       if (agentChat) {
-        agentChat("Hi Alex — let me check your strategy inputs.");
+        agentChat("Alex, I'm reviewing your FY26 strategy inputs now.");
       }
       await new Promise((res) => setTimeout(res, 700));
     },
   },
   {
     id: "validateUpload",
-    label: "Validating strategy upload…",
+    label: "Validating file upload…",
     action: async ({ agentChat }: AgenticActions) => {
       if (agentChat) {
-        agentChat("Your FY26 strategy file was uploaded successfully.");
+        agentChat("Your strategy file (FY26_Strategy_Budget.xlsx) was uploaded and processed successfully.");
       }
       await new Promise((res) => setTimeout(res, 700));
     },
   },
   {
-    id: "validateBudget",
-    label: "Reviewing budget allocations…",
+    id: "confirmBudget",
+    label: "Confirming budget data…",
     action: async ({ agentChat }: AgenticActions) => {
       if (agentChat) {
-        agentChat("Global budget is confirmed at $11M across 3 Business Units.");
+        agentChat("Total FY26 budget is confirmed at $11M, allocated across 3 Business Units.");
       }
       await new Promise((res) => setTimeout(res, 700));
     },
   },
   {
-    id: "highlightPublished",
-    label: "Highlighting published banner…",
-    action: async () => {
-      if (typeof window === "undefined") return;
-      const el = document.querySelector("[data-testid='strategy-published']");
-      if (el) {
-        el.classList.add("agentic-highlight");
-        setTimeout(() => el.classList.remove("agentic-highlight"), 1200);
+    id: "publishStatus",
+    label: "Highlighting published status…",
+    action: async ({ agentChat }: AgenticActions) => {
+      if (agentChat) {
+        agentChat("All Business Unit leaders have been notified and can now review their allocations.");
+      }
+      if (typeof window !== "undefined") {
+        const el = document.querySelector("[data-testid='strategy-published']");
+        if (el) {
+          el.classList.add("agentic-highlight");
+          setTimeout(() => el.classList.remove("agentic-highlight"), 1200);
+        }
       }
       await new Promise((res) => setTimeout(res, 700));
     },
   },
   {
-    id: "closing",
-    label: "Next step suggestion…",
+    id: "nextSteps",
+    label: "Providing next steps…",
     action: async ({ agentChat }: AgenticActions) => {
       if (agentChat) {
-        agentChat("All set, Alex. Your strategy is ready. When you're ready, switch to Dana to begin Workforce Planning.");
+        agentChat("Everything is in good shape, Alex. You can continue reviewing allocations or upload a revised strategy whenever needed.");
       }
     },
   },

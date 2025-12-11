@@ -74,7 +74,14 @@ export function AssistantPanel({ isMinimized, onMinimize, onMaximize }: Assistan
             </div>
             
             {/* Close button */}
-            <div data-size="Big" data-state="Default" data-type="Tertiary (Ghost)" className="w-8 h-8 p-2.5 rounded-[10px] flex justify-center items-center gap-2">
+            <div
+              onClick={onMinimize}
+              data-size="Big"
+              data-state="Default"
+              data-type="Tertiary (Ghost)"
+              className="w-8 h-8 p-2.5 rounded-[10px] flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-100 transition-colors"
+              title="Close Assistant"
+            >
               <div data-size="18" className="inline-flex flex-col justify-center items-center">
                 <div className="text-center justify-center text-gray-600 text-lg font-normal font-['Font_Awesome_6_Pro']">×</div>
               </div>
@@ -100,6 +107,15 @@ export function AssistantPanel({ isMinimized, onMinimize, onMaximize }: Assistan
                 </div>
               </div>
             ))}
+            {/* Close Assistant Button - shown after all messages */}
+            <div className="pt-2">
+              <button
+                onClick={onMinimize}
+                className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-gray-300 inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
+              >
+                Close Assistant
+              </button>
+            </div>
           </>
         ) : (
           <div className="flex gap-3 items-start">
