@@ -143,17 +143,27 @@ function WorkforceAnalystView() {
 function BULeaderView() {
   const { agenticMode } = useAgentic();
   const { sendMessage, resetChat } = useAgentChat();
+  const [isAssistantMinimized, setIsAssistantMinimized] = useState(true);
+  const [hasManuallyMinimized, setHasManuallyMinimized] = useState(false);
   
   // Reset chat when this persona view mounts
   useEffect(() => {
     if (agenticMode) {
       resetChat();
+      // Auto-open assistant in agentic mode (only if not manually minimized)
+      if (!hasManuallyMinimized) {
+        setIsAssistantMinimized(false);
+      }
+    } else {
+      // Close assistant when not in agentic mode
+      setIsAssistantMinimized(true);
+      setHasManuallyMinimized(false);
     }
-  }, [agenticMode, resetChat]);
+  }, [agenticMode, resetChat, hasManuallyMinimized]);
   
   // Note: BU Leader flow is now handled in the agentic-autonomous page
   // Legacy flow kept for backward compatibility
-  useAgenticOrchestrator(
+  const { isComplete: flowComplete } = useAgenticOrchestrator(
     agenticMode ? buLeaderFlow : [],
     { agentChat: sendMessage }
   );
@@ -268,17 +278,18 @@ function BULeaderView() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-4" data-testid="okr-section">
-        <h2 className="text-lg font-semibold text-gray-900">Objectives & Key Results</h2>
-        <Button
-          buttonType="primary"
-          label="+ Add Objective"
-          onClick={handleAddObjective}
-          onFocus={() => {}}
-          onMouseEnter={() => {}}
-          size="small"
-        />
-      </div>
+      <div data-testid="okr-section">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900">Objectives & Key Results</h2>
+          <Button
+            buttonType="primary"
+            label="+ Add Objective"
+            onClick={handleAddObjective}
+            onFocus={() => {}}
+            onMouseEnter={() => {}}
+            size="small"
+          />
+        </div>
 
       {/* New Objective Form */}
       {isAddingObjective && (
@@ -333,6 +344,38 @@ function BULeaderView() {
         />
       ))}
       </div>
+
+      {/* Assistant Panel - Right Side */}
+      {!isAssistantMinimized && (
+        <div className="w-96 min-w-0 -mr-6 pr-0 fixed right-[14px] top-[73px] bottom-0 z-40">
+          <AssistantPanel
+            isMinimized={isAssistantMinimized}
+            onMinimize={() => {
+              setIsAssistantMinimized(true);
+              setHasManuallyMinimized(true);
+            }}
+            onMaximize={() => {
+              setIsAssistantMinimized(false);
+              setHasManuallyMinimized(false);
+            }}
+            flowComplete={flowComplete}
+          />
+        </div>
+      )}
+      {isAssistantMinimized && (
+        <AssistantPanel
+          isMinimized={isAssistantMinimized}
+          onMinimize={() => {
+            setIsAssistantMinimized(true);
+            setHasManuallyMinimized(true);
+          }}
+          onMaximize={() => {
+            setIsAssistantMinimized(false);
+            setHasManuallyMinimized(false);
+          }}
+          flowComplete={flowComplete}
+        />
+      )}
     </div>
   );
 }

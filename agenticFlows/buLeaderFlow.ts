@@ -18,16 +18,23 @@ export function getBULeaderFlow(
               actions: [
                 {
                   label: "Yes, generate OKRs",
-                  onClick: () => startAutoOKR(true),
+                  onClick: () => {
+                    console.log("YES clicked - starting auto OKR generation");
+                    startAutoOKR(true);
+                  },
                 },
                 {
                   label: "No, maybe later",
-                  onClick: () => startAutoOKR(false),
+                  onClick: () => {
+                    console.log("NO clicked - skipping auto generation");
+                    startAutoOKR(false);
+                  },
                 },
               ],
             }
           );
         }
+        await new Promise((res) => setTimeout(res, 500));
       },
     },
   ];
@@ -62,7 +69,7 @@ export const autoOKRFlow = [
         const buttons = Array.from(document.querySelectorAll("button"));
         const addButton = buttons.find(btn => btn.textContent?.includes("+ Add Objective"));
         if (addButton) {
-          await act(`button:contains("+ Add Objective")`, "click");
+          (addButton as HTMLElement).click();
           await new Promise((res) => setTimeout(res, 800));
         }
       }

@@ -3,11 +3,18 @@
 import { useEffect, useState } from "react";
 
 export default function FakeCursor({ x, y }: { x: number; y: number }) {
+  // Hide cursor when offscreen (default position)
+  const displayX = x ?? -999;
+  const displayY = y ?? -999;
+  const isVisible = displayX > -100 && displayY > -100;
+
+  if (!isVisible) return null;
+
   return (
     <div
       style={{
-        left: x,
-        top: y,
+        left: displayX,
+        top: displayY,
       }}
       className="
         fixed z-[9999]

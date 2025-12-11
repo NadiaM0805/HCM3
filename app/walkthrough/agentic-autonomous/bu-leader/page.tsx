@@ -4,25 +4,24 @@ import { useEffect, useState } from "react";
 import Home from "@/app/page";
 import { useAgentic } from "@/contexts/AgenticContext";
 import { useAgentChat } from "@/contexts/AgentChatContext";
+import { useRole } from "@/contexts/RoleContext";
 import { getBULeaderFlow, autoOKRFlow } from "@/agenticFlows/buLeaderFlow";
 import { useAgenticOrchestrator } from "@/hooks/useAgenticOrchestrator";
 
 export default function AgenticBULeader() {
   const { agenticMode } = useAgentic();
   const { sendMessage, resetChat } = useAgentChat();
+  const { setCurrentRole } = useRole();
   const [startAuto, setStartAuto] = useState<boolean | null>(null);
-  const [isAssistantMinimized, setIsAssistantMinimized] = useState(true);
 
-  // Reset chat and open assistant when agentic mode is active
+  // Set role to BU Leader and reset chat when agentic mode is active
   useEffect(() => {
     if (agenticMode) {
+      setCurrentRole("BU Leader");
       resetChat();
-      setIsAssistantMinimized(false);
       setStartAuto(null); // Reset choice when entering agentic mode
-    } else {
-      setIsAssistantMinimized(true);
     }
-  }, [agenticMode, resetChat]);
+  }, [agenticMode, resetChat, setCurrentRole]);
 
   // Offer interactive choice first
   const offerFlow = getBULeaderFlow(sendMessage, setStartAuto);
