@@ -17,7 +17,7 @@ import { useRole } from "@/contexts/RoleContext";
 import { useAgentic } from "@/contexts/AgenticContext";
 import { useAgentChat } from "@/contexts/AgentChatContext";
 import { useAgenticOrchestrator } from "@/hooks/useAgenticOrchestrator";
-import { hrbpFlow } from "@/agenticFlows/hrbpFlow";
+import { createHRBPOfferFlow, hrbpAutoPlanFlow } from "@/agenticFlows/hrbpFlow";
 import { toast } from "@/components/design-system/Snackbar";
 import type { PlanLine } from "@/types/planLine";
 import { MOCK_PLAN_LINES } from "@/types/planLine";
@@ -390,7 +390,7 @@ function EnhancedStrategyCard({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 relative">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 relative" data-testid="wp-retail-card">
       <div className="pr-24">
         <h3 className="text-base font-semibold text-gray-900 mb-3">{title}</h3>
         <p className="text-sm text-gray-700 mb-4">
@@ -402,6 +402,7 @@ function EnhancedStrategyCard({
           <div className="mt-4">
             <button
               onClick={() => setIsExpanded(!isExpanded)}
+              data-testid="wp-retail-show-details"
               className="flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 transition-colors"
             >
               <svg
@@ -428,7 +429,7 @@ function EnhancedStrategyCard({
                 </h4>
 
                 {/* Key Results */}
-                <div className="space-y-3">
+                <div className="space-y-3" data-testid="wp-retail-krs">
                   {strategyData.keyResults.map((kr) => (
                     <KeyResultRow
                       key={kr.id}
@@ -649,6 +650,7 @@ function Artifacts({
             <div
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
+              data-testid={tab.id === "draft" ? "wp-tab-draft-plan" : undefined}
               className={`
                 py-2.5 flex justify-center items-start gap-2 cursor-pointer
                 ${
@@ -697,12 +699,20 @@ function Artifacts({
 
       {activeTab === "draft" && (
         <div className="space-y-6">
-          <DraftHeadcountPlanTable
-            lines={draftPlanLines}
-            onAcceptAllSuggested={onAcceptAllSuggested}
-            onFreezePlan={onFreezePlan}
-            onOpenFreezePlanModal={onOpenFreezePlanModal}
-          />
+          <div
+            data-testid="wp-draft-plan-status"
+            className="mb-2 inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-medium wp-status-hidden"
+          >
+            Draft plan generated · Ready for review
+          </div>
+          <div data-testid="wp-draft-plan-table">
+            <DraftHeadcountPlanTable
+              lines={draftPlanLines}
+              onAcceptAllSuggested={onAcceptAllSuggested}
+              onFreezePlan={onFreezePlan}
+              onOpenFreezePlanModal={onOpenFreezePlanModal}
+            />
+          </div>
           
           {/* Agent Reasoning Panel */}
           {agentReasoning && (
@@ -735,19 +745,47 @@ export default function WorkforcePlanningPage() {
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [agentReasoning, setAgentReasoning] = useState<string | null>(null);
   const [isAssistantMinimized, setIsAssistantMinimized] = useState(!agenticMode);
+  const [startAuto, setStartAuto] = useState<boolean | null>(null);
 
-  // Reset chat when HRBP role is active in agentic mode
+  // Reset chat and open assistant when HRBP role is active in agentic mode
   useEffect(() => {
     if (currentRole === "HRBP" && agenticMode) {
       resetChat();
+      setIsAssistantMinimized(false);
+      setStartAuto(null); // Reset choice when role changes
+    } else {
+      setIsAssistantMinimized(true);
     }
   }, [currentRole, agenticMode, resetChat]);
 
-  // Integrate orchestrator for HRBP flow
+  // Offer flow: ask Dana if she wants auto plan
+  const hrbpOfferFlow =
+    agenticMode && currentRole === "HRBP"
+      ? createHRBPOfferFlow(sendMessage, setStartAuto)
+      : [];
+
+  // Run offer flow only while startAuto is null
   useAgenticOrchestrator(
-    currentRole === "HRBP" && agenticMode ? hrbpFlow : [],
+    agenticMode && currentRole === "HRBP" && startAuto === null
+      ? hrbpOfferFlow
+      : [],
     { agentChat: sendMessage }
   );
+
+  // Run auto plan flow only if user clicked "Yes"
+  useAgenticOrchestrator(
+    agenticMode && currentRole === "HRBP" && startAuto === true
+      ? hrbpAutoPlanFlow
+      : [],
+    { agentChat: sendMessage }
+  );
+
+  // If Dana clicked "No, I'll review manually"
+  useEffect(() => {
+    if (agenticMode && currentRole === "HRBP" && startAuto === false) {
+      sendMessage("No problem, Dana. You can review the OKRs and add headcount manually whenever you're ready.");
+    }
+  }, [agenticMode, currentRole, startAuto, sendMessage]);
 
   // Modal states for the draft plan flow
   const [isFreezePlanOpen, setIsFreezePlanOpen] = useState(false);
@@ -756,12 +794,6 @@ export default function WorkforcePlanningPage() {
   const [isBudgetApprovalOpen, setIsBudgetApprovalOpen] = useState(false);
   const [positionBudget, setPositionBudget] = useState<number | null>(null);
   const [availableBudget, setAvailableBudget] = useState<number | null>(null);
-
-  // Integrate orchestrator for HRBP flow
-  useAgenticOrchestrator(
-    currentRole === "HRBP" && agenticMode ? hrbpFlow : [],
-    { agentChat: sendMessage }
-  );
 
   const handleRunAgentHeadcount = () => {
     if (isAgentRunning) return;

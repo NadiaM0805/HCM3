@@ -92,6 +92,23 @@ button:disabled {
   transition: opacity 0.3s ease;
 }
 
+.wp-status-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wp-status-visible {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.wp-highlight {
+  outline: 3px solid #7F56D9;
+  outline-offset: 3px;
+  border-radius: 6px;
+  transition: outline 0.2s ease;
+}
+
 /* Fix logo size in sidebar */
 aside img[alt="Home"] {
   max-width: 24px !important;
