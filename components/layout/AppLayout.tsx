@@ -27,14 +27,10 @@ export function AppLayout({ children, pageTitle = "Dashboard" }: AppLayoutProps)
               <h1 className="text-sm font-semibold text-gray-900">HCM Demo</h1>
               <h2 className="text-lg font-medium text-gray-700">{pageTitle}</h2>
               {agenticMode && (
-                <Badge variant="success" size="small">
-                  🤖 Agentic Mode
-                </Badge>
+                <Badge value="🤖 Agentic Mode" type="success" size="small" />
               )}
               {!agenticMode && (
-                <Badge variant="neutral" size="small">
-                  ✨ AI-Guided Mode
-                </Badge>
+                <Badge value="✨ AI-Guided Mode" type="grey" size="small" />
               )}
             </div>
             <RoleSwitcher
