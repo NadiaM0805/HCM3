@@ -91,14 +91,16 @@ export function CreatePositionModal({
             onMouseEnter={() => {}}
             size="small"
           />
-          <Button
-            buttonType="primary"
-            label="Create Position"
-            onClick={handleSubmit}
-            onFocus={() => {}}
-            onMouseEnter={() => {}}
-            size="small"
-          />
+          <div data-testid="create-position">
+            <Button
+              buttonType="primary"
+              label="Create Position"
+              onClick={handleSubmit}
+              onFocus={() => {}}
+              onMouseEnter={() => {}}
+              size="small"
+            />
+          </div>
         </>
       }
     >

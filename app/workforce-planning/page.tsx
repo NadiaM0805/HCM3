@@ -157,6 +157,7 @@ function PlanningWorkspace({
                     {/* Agentic Mode Button */}
                     <div className="pt-2">
                       <div
+                        data-testid="generate-plan"
                         onClick={onRunAgentHeadcount}
                         className="w-full px-4 py-2.5 bg-amber-500 rounded-[10px] inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-amber-600 transition-colors"
                       >
@@ -181,6 +182,7 @@ function PlanningWorkspace({
                     {/* Agent Recommended Button */}
                     <div className="pt-2">
                       <div
+                        data-testid="generate-plan"
                         onClick={onRunAgentHeadcount}
                         className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-[#4d3ee0] inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors"
                       >

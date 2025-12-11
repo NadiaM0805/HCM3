@@ -2,37 +2,39 @@
 
 import Home from "@/app/page";
 import { useAgenticOrchestrator } from "@/hooks/useAgenticOrchestrator";
+import { useAgenticCursor } from "@/contexts/CursorContext";
 import AgentReasoningPanel from "@/components/agentic/AgentReasoningPanel";
 
 export default function AgenticDashboard() {
+  const { act } = useAgenticCursor();
+
   const steps = [
     {
       id: "openPlaybook",
       label: "Opening Workforce Planning playbook…",
       action: async () => {
-        // Future: Navigate to workforce planning
-        // Future: Auto-open assistant panel
+        await act("[data-testid='open-playbook']", "click");
       },
     },
     {
       id: "generatePlan",
       label: "Generating draft headcount plan…",
       action: async () => {
-        // Future: Trigger agent to generate plan
+        await act("[data-testid='generate-plan']", "click");
       },
     },
     {
       id: "freezePlan",
-      label: "Freezing plan for approval…",
+      label: "Freezing plan…",
       action: async () => {
-        // Future: Auto-freeze plan
+        await act("[data-testid='freeze-plan-button']", "click");
       },
     },
     {
       id: "createPositions",
-      label: "Creating new positions…",
+      label: "Creating positions…",
       action: async () => {
-        // Future: Auto-create positions
+        await act("[data-testid='create-position']", "click");
       },
     },
   ];

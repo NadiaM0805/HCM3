@@ -66,14 +66,16 @@ export function FreezePlanModal({
             onMouseEnter={() => {}}
             size="small"
           />
-          <Button
-            buttonType="primary"
-            label="Freeze plan"
-            onClick={onFreezePlan}
-            onFocus={() => {}}
-            onMouseEnter={() => {}}
-            size="small"
-          />
+          <div data-testid="freeze-plan-button">
+            <Button
+              buttonType="primary"
+              label="Freeze plan"
+              onClick={onFreezePlan}
+              onFocus={() => {}}
+              onMouseEnter={() => {}}
+              size="small"
+            />
+          </div>
         </>
       }
     >

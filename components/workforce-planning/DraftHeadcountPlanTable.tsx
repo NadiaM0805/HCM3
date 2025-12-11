@@ -35,22 +35,26 @@ export function DraftHeadcountPlanTable({
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-900">Draft headcount plan</h3>
         <div className="flex gap-3">
-          <Button
-            buttonType="secondary"
-            label="Accept all suggested"
-            onClick={onOpenFreezePlanModal}
-            onFocus={() => {}}
-            onMouseEnter={() => {}}
-            size="small"
-          />
-          <Button
-            buttonType="primary"
-            label="Freeze the plan"
-            onClick={onFreezePlan}
-            onFocus={() => {}}
-            onMouseEnter={() => {}}
-            size="small"
-          />
+          <div data-testid="accept-all-suggested">
+            <Button
+              buttonType="secondary"
+              label="Accept all suggested"
+              onClick={onOpenFreezePlanModal}
+              onFocus={() => {}}
+              onMouseEnter={() => {}}
+              size="small"
+            />
+          </div>
+          <div data-testid="freeze-plan-button">
+            <Button
+              buttonType="primary"
+              label="Freeze the plan"
+              onClick={onFreezePlan}
+              onFocus={() => {}}
+              onMouseEnter={() => {}}
+              size="small"
+            />
+          </div>
         </div>
       </div>
 

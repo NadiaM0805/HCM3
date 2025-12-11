@@ -1,15 +1,25 @@
 "use client";
 
 import { AgenticContext } from "@/contexts/AgenticContext";
+import { CursorProvider } from "@/contexts/CursorContext";
 import { useState } from "react";
+import FakeCursor from "@/components/agentic/FakeCursor";
+import { useAgenticCursor } from "@/contexts/CursorContext";
+
+function CursorOverlay() {
+  const { cursorPos } = useAgenticCursor();
+  return <FakeCursor x={cursorPos.x} y={cursorPos.y} />;
+}
 
 export default function AgenticLayout({ children }: { children: React.ReactNode }) {
   const [agenticMode, setAgenticMode] = useState(true);
 
   return (
     <AgenticContext.Provider value={{ agenticMode, setAgenticMode }}>
-      {children}
+      <CursorProvider>
+        {children}
+        <CursorOverlay />
+      </CursorProvider>
     </AgenticContext.Provider>
   );
 }
-

@@ -91,15 +91,17 @@ export function HrbpDashboard() {
             <p className="text-sm text-gray-600 mb-4">
               Turn FY26 strategy and budgets into time-phased headcount Plan Lines and Position Actions.
             </p>
-            <Button
-              buttonType="primary"
-              label="Open playbook"
-              onClick={handleOpenPlaybook}
-              onFocus={() => {}}
-              onMouseEnter={() => {}}
-              size="small"
-              fullWidth
-            />
+            <div data-testid="open-playbook">
+              <Button
+                buttonType="primary"
+                label="Open playbook"
+                onClick={handleOpenPlaybook}
+                onFocus={() => {}}
+                onMouseEnter={() => {}}
+                size="small"
+                fullWidth
+              />
+            </div>
           </div>
 
           {/* Attrition Risk – Customer Support */}
