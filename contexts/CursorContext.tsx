@@ -44,7 +44,13 @@ export function CursorProvider({ children }: { children: ReactNode }) {
 
   async function act(selector: string, action: "move" | "click") {
     if (typeof window === "undefined") return;
-    const el = document.querySelector(selector) as HTMLElement;
+    
+    // Try data-testid first, then regular selector
+    let el = document.querySelector(`[data-testid="${selector}"]`) as HTMLElement;
+    if (!el) {
+      el = document.querySelector(selector) as HTMLElement;
+    }
+    
     if (!el) {
       console.warn(`Element not found: ${selector}`);
       return;
@@ -60,7 +66,13 @@ export function CursorProvider({ children }: { children: ReactNode }) {
 
   async function type(selector: string, text: string) {
     if (typeof window === "undefined") return;
-    const el = document.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement;
+    
+    // Try data-testid first, then ID, then regular selector
+    let el = document.querySelector(`[data-testid="${selector}"]`) as HTMLInputElement | HTMLTextAreaElement;
+    if (!el) {
+      el = document.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement;
+    }
+    
     if (!el) {
       console.warn(`Element not found: ${selector}`);
       return;

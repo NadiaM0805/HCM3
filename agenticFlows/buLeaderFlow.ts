@@ -1,33 +1,33 @@
 import { AgenticActions } from "@/types/agentic";
 import type { MessageAction } from "@/contexts/AgentChatContext";
 
-// Function to get the initial offer flow (with branching)
-export function getBULeaderFlow(
-  sendAgentMessage: (message: string | { text: string; actions?: MessageAction[] }, actions?: MessageAction[]) => void,
-  startAutoOKR: (value: boolean) => void
+// Function to create the initial offer flow (with branching)
+export function createBULeaderOfferFlow(
+  agentChat: (message: string | { text: string; actions?: MessageAction[] }, actions?: MessageAction[]) => void,
+  setStartAuto: (value: boolean) => void
 ) {
   return [
     {
-      id: "offerAutoGenerate",
+      id: "offerAutoOKRs",
       label: "Offering OKR automation…",
-      action: async ({ agentChat }: AgenticActions) => {
-        if (agentChat) {
-          agentChat(
+      action: async ({ agentChat: agentChatAction }: AgenticActions) => {
+        if (agentChatAction) {
+          agentChatAction(
             {
-              text: "Priya, I reviewed your FY26 strategy inputs. Would you like me to automatically generate your Objectives & Key Results?",
+              text: "Priya, would you like me to automatically draft your Objectives & Key Results for FY26 based on your strategy document?",
               actions: [
                 {
-                  label: "Yes, generate OKRs",
+                  label: "Yes, generate my OKRs",
                   onClick: () => {
                     console.log("YES clicked - starting auto OKR generation");
-                    startAutoOKR(true);
+                    setStartAuto(true);
                   },
                 },
                 {
-                  label: "No, maybe later",
+                  label: "No, I'll do it later",
                   onClick: () => {
                     console.log("NO clicked - skipping auto generation");
-                    startAutoOKR(false);
+                    setStartAuto(false);
                   },
                 },
               ],
@@ -41,49 +41,49 @@ export function getBULeaderFlow(
 }
 
 // Full automation flow when YES is clicked
-export const autoOKRFlow = [
+export const buLeaderAutoOKRFlow = [
   {
     id: "scrollToOKR",
     label: "Scrolling to OKR section…",
-    action: async ({ act, agentChat }: AgenticActions) => {
+    action: async ({ agentChat, act }: AgenticActions) => {
+      if (agentChat) {
+        agentChat("Great, I'll draft your OKRs now based on your strategy.");
+      }
       if (typeof window !== "undefined") {
-        const section = document.querySelector("[data-testid='okr-section']");
-        if (section) {
-          section.scrollIntoView({ behavior: "smooth" });
-          section.classList.add("agentic-highlight");
-          setTimeout(() => section.classList.remove("agentic-highlight"), 1200);
+        const okrSection = document.querySelector("[data-testid='okr-section']");
+        if (okrSection) {
+          okrSection.scrollIntoView({ behavior: "smooth", block: "center" });
+          await new Promise((res) => setTimeout(res, 600));
         }
       }
-      if (agentChat) {
-        agentChat("Let me draft your FY26 OKRs based on strategic priorities…");
-      }
-      await new Promise((res) => setTimeout(res, 800));
     },
   },
   {
     id: "clickAddObjective",
     label: "Clicking Add Objective button…",
-    action: async ({ act, agentChat }: AgenticActions) => {
+    action: async ({ agentChat, act }: AgenticActions) => {
+      if (agentChat) {
+        agentChat("Creating an objective focused on transforming the in-branch experience.");
+      }
       if (typeof window !== "undefined") {
-        // Find and click the "Add Objective" button
-        const buttons = Array.from(document.querySelectorAll("button"));
-        const addButton = buttons.find(btn => btn.textContent?.includes("+ Add Objective"));
+        // Try data-testid first, then find by text
+        let addButton = document.querySelector("[data-testid='add-objective-button']") as HTMLElement;
+        if (!addButton) {
+          const buttons = Array.from(document.querySelectorAll("button"));
+          addButton = buttons.find(btn => btn.textContent?.includes("+ Add Objective")) as HTMLElement;
+        }
         if (addButton) {
-          (addButton as HTMLElement).click();
-          await new Promise((res) => setTimeout(res, 800));
+          await act("[data-testid='add-objective-button']", "click");
+          await new Promise((res) => setTimeout(res, 1000));
         }
       }
-      if (agentChat) {
-        agentChat("Creating Objective: Improve Branch Experience.");
-      }
-      await new Promise((res) => setTimeout(res, 700));
     },
   },
   {
     id: "typeObjective1",
     label: "Typing Objective 1…",
     action: async ({ type, agentChat }: AgenticActions) => {
-      await type("#okr-objective-1-input", "Improve Branch Experience");
+      await type("#okr-objective-1-input", "Transform the in-branch experience to be faster and advisory-focused");
       await new Promise((res) => setTimeout(res, 800));
     },
   },
@@ -92,7 +92,6 @@ export const autoOKRFlow = [
     label: "Saving Objective 1…",
     action: async ({ act }: AgenticActions) => {
       if (typeof window !== "undefined") {
-        // Find and click the "Save Objective" button
         const buttons = Array.from(document.querySelectorAll("button"));
         const saveBtn = buttons.find(btn => btn.textContent?.includes("Save Objective"));
         if (saveBtn) {
@@ -116,7 +115,7 @@ export const autoOKRFlow = [
       }
       await new Promise((res) => setTimeout(res, 800));
       if (agentChat) {
-        agentChat("Adding Key Result: Increase branch NPS from 68 → 75 by Q4");
+        agentChat("Adding Key Result: Increase branch NPS from 68 → 75 by Q4 FY26");
       }
       await new Promise((res) => setTimeout(res, 700));
     },
@@ -125,7 +124,7 @@ export const autoOKRFlow = [
     id: "typeKR1",
     label: "Typing KR1…",
     action: async ({ type }: AgenticActions) => {
-      await type("#okr-kr-1-input", "Increase branch NPS from 68 → 75 by Q4");
+      await type("#okr-kr-1-input", "Increase branch NPS from 68 → 75 by Q4 FY26");
       await new Promise((res) => setTimeout(res, 800));
     },
   },
@@ -157,7 +156,7 @@ export const autoOKRFlow = [
       }
       await new Promise((res) => setTimeout(res, 800));
       if (agentChat) {
-        agentChat("Adding Key Result: Reduce average wait time by 20%");
+        agentChat("Adding Key Result: Reduce average in-branch wait time by 20% by Q2 FY26");
       }
       await new Promise((res) => setTimeout(res, 700));
     },
@@ -166,7 +165,7 @@ export const autoOKRFlow = [
     id: "typeKR2",
     label: "Typing KR2…",
     action: async ({ type }: AgenticActions) => {
-      await type("#okr-kr-2-input", "Reduce average wait time by 20%");
+      await type("#okr-kr-2-input", "Reduce average in-branch wait time by 20% by Q2 FY26");
       await new Promise((res) => setTimeout(res, 800));
     },
   },
@@ -189,7 +188,7 @@ export const autoOKRFlow = [
     label: "Finishing up…",
     action: async ({ agentChat }: AgenticActions) => {
       if (agentChat) {
-        agentChat("Your FY26 OKRs are drafted, Priya. You can refine them anytime.");
+        agentChat("Your FY26 OKRs are drafted, Priya. You can review and fine-tune them whenever you're ready.");
       }
     },
   },
