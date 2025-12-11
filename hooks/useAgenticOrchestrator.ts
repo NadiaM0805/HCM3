@@ -28,25 +28,20 @@ export function useAgenticOrchestrator(
     hasRunRef.current = true;
     setRunning(true);
 
-    // Add welcome message
-    if (agentChat) {
-      agentChat("👋 Welcome to Agentic Autonomous Workflow. I'll perform this workflow for you. You can pause or override at any time.");
-    }
-
     for (let i = 0; i < steps.length; i++) {
       setCurrentStep(i);
       const step = steps[i];
-      
-      // Send message to XPlus Assistant
-      if (agentChat) {
-        agentChat(`🤖 ${step.label}`);
-      }
 
-      // Execute step with actions
-      await step.action({ act, type, select });
+      // Execute step with all available actions, including agentChat
+      await step.action({
+        agentChat,
+        act,
+        type,
+        select,
+      });
       
-      // Wait 400ms between steps
-      await new Promise((res) => setTimeout(res, 400));
+      // Wait 500ms between steps for better readability
+      await new Promise((res) => setTimeout(res, 500));
     }
 
     setRunning(false);
