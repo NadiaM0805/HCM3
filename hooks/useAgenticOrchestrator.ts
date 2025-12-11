@@ -65,10 +65,10 @@ export function useAgenticOrchestrator(
 
   useEffect(() => {
     if (agenticMode && steps.length > 0 && !running && !hasRunRef.current) {
-      // Small delay to ensure chat is reset first
+      // Small delay to ensure chat is reset first and component is fully mounted
       const timer = setTimeout(() => {
         runSteps();
-      }, 100);
+      }, 200);
       return () => clearTimeout(timer);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
