@@ -15,8 +15,11 @@ function CursorOverlay() {
   }, []);
 
   if (!mounted) return null;
+  
+  // Only show cursor if both x and y are valid numbers (not null/undefined)
+  if (cursorPos.x == null || cursorPos.y == null) return null;
 
-  return <FakeCursor x={cursorPos.x ?? undefined} y={cursorPos.y ?? undefined} />;
+  return <FakeCursor x={cursorPos.x} y={cursorPos.y} />;
 }
 
 export default function AgenticLayout({ children }: { children: React.ReactNode }) {

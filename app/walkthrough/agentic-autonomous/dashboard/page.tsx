@@ -14,24 +14,23 @@ export default function AgenticDashboard() {
   const { sendMessage, resetChat } = useAgentChat();
   const { currentRole } = useRole();
 
-  // Reset chat when agentic mode is active
+  // Reset chat when agentic mode is active or role changes
   useEffect(() => {
     if (agenticMode) {
       resetChat();
     }
-  }, [agenticMode, resetChat]);
+  }, [agenticMode, currentRole, resetChat]);
 
   // Choose the correct flow based on current persona
-  let activeFlow: typeof analystFlow = [];
-  if (agenticMode) {
+  const activeFlow = (() => {
+    if (!agenticMode) return [];
     if (currentRole === "Workforce Analyst") {
-      activeFlow = analystFlow;
+      return analystFlow;
     } else if (currentRole === "BU Leader") {
-      activeFlow = buLeaderFlowSimple;
-    } else {
-      activeFlow = [];
+      return buLeaderFlowSimple;
     }
-  }
+    return [];
+  })();
 
   // Run the orchestrator with the selected flow
   useAgenticOrchestrator(activeFlow, {

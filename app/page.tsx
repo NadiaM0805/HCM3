@@ -161,12 +161,9 @@ function BULeaderView() {
     }
   }, [agenticMode, resetChat, hasManuallyMinimized]);
   
-  // Note: BU Leader flow is now handled in the agentic-autonomous page
-  // Legacy flow kept for backward compatibility
-  const { isComplete: flowComplete } = useAgenticOrchestrator(
-    agenticMode ? buLeaderFlow : [],
-    { agentChat: sendMessage }
-  );
+  // Note: BU Leader flow is now handled in the agentic-autonomous dashboard page
+  // Don't run orchestrator here to avoid conflicts
+  const flowComplete = false;
 
   const [objectives, setObjectives] = useState<Objective[]>([
     {

@@ -57,7 +57,7 @@ export function useAgenticOrchestrator(
   // Reset when steps change (persona switch)
   useEffect(() => {
     const stepsKey = steps.map(s => s.id).join(",");
-    if (stepsRef.current !== stepsKey && stepsKey !== "") {
+    if (stepsRef.current !== stepsKey) {
       hasRunRef.current = false;
       setRunning(false);
       setCurrentStep(0);
@@ -67,25 +67,41 @@ export function useAgenticOrchestrator(
     }
   }, [steps]);
 
-  // Guard to ensure flow runs only once per mount
+  // Guard to ensure flow runs when agentic mode is active and steps are available
   useEffect(() => {
     if (!agenticMode) {
       setHasRun(false);
       hasRunRef.current = false;
+      setIsComplete(false);
+      setRunning(false);
       return;
     }
-    if (hasRun) return;
-    if (steps.length === 0) return;
+    if (steps.length === 0) {
+      hasRunRef.current = false;
+      setHasRun(false);
+      setIsComplete(false);
+      return;
+    }
+    // Check if we've already run this exact flow
+    const stepsKey = steps.map(s => s.id).join(",");
+    if (hasRunRef.current && stepsRef.current === stepsKey) {
+      return; // Already ran this flow
+    }
     if (running) return;
     
-    setHasRun(true);
+    // Reset state for new flow
+    hasRunRef.current = false;
+    setHasRun(false);
+    setIsComplete(false);
+    setRunning(false);
+    
     // Small delay to ensure chat is reset first and component is fully mounted
     const timer = setTimeout(() => {
       runSteps();
-    }, 200);
+    }, 800);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agenticMode, steps.length]);
+  }, [agenticMode, steps.length, steps.map(s => s.id).join(",")]);
 
   // Reset when agenticMode changes
   useEffect(() => {
