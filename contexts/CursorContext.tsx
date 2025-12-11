@@ -5,8 +5,8 @@ import { typeIntoElement } from "@/utils/agenticTyping";
 import { highlight } from "@/utils/highlightElement";
 
 interface CursorContextType {
-  cursorPos: { x: number; y: number };
-  setCursorPos: (pos: { x: number; y: number }) => void;
+  cursorPos: { x: number | null; y: number | null };
+  setCursorPos: (pos: { x: number | null; y: number | null }) => void;
   moveCursorToElement: (el: HTMLElement, duration?: number) => Promise<void>;
   clickElement: (el: HTMLElement, delay?: number) => Promise<void>;
   act: (selector: string, action: "move" | "click") => Promise<void>;
@@ -17,7 +17,7 @@ interface CursorContextType {
 const CursorContext = createContext<CursorContextType | undefined>(undefined);
 
 export function CursorProvider({ children }: { children: ReactNode }) {
-  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
+  const [cursorPos, setCursorPos] = useState<{ x: number | null; y: number | null }>({ x: null, y: null });
 
   function moveCursorToElement(el: HTMLElement, duration = 600) {
     if (typeof window === "undefined" || !el) {
@@ -106,7 +106,7 @@ export function useAgenticCursor() {
   if (context === undefined) {
     // Return safe defaults when provider is not available (e.g., during SSR or non-agentic pages)
     return {
-      cursorPos: { x: -100, y: -100 },
+      cursorPos: { x: null, y: null },
       setCursorPos: () => {},
       moveCursorToElement: async () => {},
       clickElement: async () => {},

@@ -1,30 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
+export default function FakeCursor({ x, y }: { x?: number; y?: number }) {
+  // Hide cursor when x or y is null/undefined
+  if (x == null || y == null) return null;
 
-export default function FakeCursor({ x, y }: { x: number; y: number }) {
-  // Hide cursor when offscreen (default position)
-  const displayX = x ?? -999;
-  const displayY = y ?? -999;
-  const isVisible = displayX > -100 && displayY > -100;
-
-  if (!isVisible) return null;
+  // Also hide if offscreen (default position)
+  if (x < -100 || y < -100) return null;
 
   return (
     <div
       style={{
-        left: displayX,
-        top: displayY,
+        position: "fixed",
+        left: x,
+        top: y,
+        width: 10,
+        height: 10,
+        borderRadius: "999px",
+        background: "#7F56D9",
+        pointerEvents: "none",
+        zIndex: 9999,
+        transition: "all 0.3s ease",
       }}
-      className="
-        fixed z-[9999]
-        w-4 h-4
-        rounded-full
-        bg-[#4d3ee0]
-        shadow-lg shadow-purple-400/40
-        transition-all duration-300
-        pointer-events-none
-      "
     />
   );
 }

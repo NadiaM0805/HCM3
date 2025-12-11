@@ -16,7 +16,7 @@ function CursorOverlay() {
 
   if (!mounted) return null;
 
-  return <FakeCursor x={cursorPos.x} y={cursorPos.y} />;
+  return <FakeCursor x={cursorPos.x ?? undefined} y={cursorPos.y ?? undefined} />;
 }
 
 export default function AgenticLayout({ children }: { children: React.ReactNode }) {
