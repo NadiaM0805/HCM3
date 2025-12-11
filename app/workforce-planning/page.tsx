@@ -781,13 +781,6 @@ function WorkforcePlanningPageContent() {
   const [startAuto, setStartAuto] = useState<boolean | null>(null);
 
   const isHRBPAgentic = effectiveAgenticMode && currentRole === "HRBP";
-  
-  // Store agentic mode in sessionStorage when detected
-  useEffect(() => {
-    if (isFromAgenticRoute && typeof window !== "undefined") {
-      sessionStorage.setItem("agenticMode", "true");
-    }
-  }, [isFromAgenticRoute]);
 
   // When HRBP + agentic, open/reset assistant
   useEffect(() => {
@@ -1003,12 +996,33 @@ function WorkforcePlanningPageContent() {
 // Main Workforce Planning Page - Wrap with AgenticProvider if needed
 export default function WorkforcePlanningPage() {
   const pathname = usePathname();
+  const [shouldWrapWithProvider, setShouldWrapWithProvider] = useState(false);
   
-  // Check if we're in an agentic route
-  const isAgenticRoute = pathname?.includes("agentic-autonomous");
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    const checkAgenticMode = () => {
+      // Check sessionStorage (set by AgenticLayout when entering agentic mode)
+      const fromStorage = sessionStorage.getItem("agenticMode") === "true";
+      // Check if we're in an agentic route
+      const isAgenticRoute = pathname?.includes("agentic-autonomous");
+      // Check referrer
+      const fromReferrer = document.referrer.includes("agentic-autonomous");
+      
+      const shouldBeAgentic = fromStorage || isAgenticRoute || fromReferrer;
+      setShouldWrapWithProvider(shouldBeAgentic);
+    };
+    
+    // Check immediately
+    checkAgenticMode();
+    
+    // Also check periodically in case sessionStorage was set after mount
+    const interval = setInterval(checkAgenticMode, 200);
+    return () => clearInterval(interval);
+  }, [pathname]);
   
-  // If we're in an agentic route, wrap with AgenticProvider
-  if (isAgenticRoute) {
+  // If we should be in agentic mode, wrap with AgenticProvider
+  if (shouldWrapWithProvider) {
     return (
       <AgenticProvider agenticMode={true}>
         <WorkforcePlanningPageContent />
