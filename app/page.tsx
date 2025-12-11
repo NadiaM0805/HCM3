@@ -31,6 +31,7 @@ import { useEffect } from "react";
 function WorkforceAnalystView() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [isAssistantMinimized, setIsAssistantMinimized] = useState(true);
+  const [hasManuallyMinimized, setHasManuallyMinimized] = useState(false);
   const { agenticMode } = useAgentic();
   const { sendMessage, resetChat } = useAgentChat();
   
@@ -38,16 +39,19 @@ function WorkforceAnalystView() {
   useEffect(() => {
     if (agenticMode) {
       resetChat();
-      // Auto-open assistant in agentic mode
-      setIsAssistantMinimized(false);
+      // Auto-open assistant in agentic mode (only if not manually minimized)
+      if (!hasManuallyMinimized) {
+        setIsAssistantMinimized(false);
+      }
     } else {
       // Close assistant when not in agentic mode
       setIsAssistantMinimized(true);
+      setHasManuallyMinimized(false);
     }
-  }, [agenticMode, resetChat]);
+  }, [agenticMode, resetChat, hasManuallyMinimized]);
   
   // Integrate orchestrator for Analyst flow
-  useAgenticOrchestrator(
+  const { isComplete: flowComplete } = useAgenticOrchestrator(
     agenticMode ? analystFlow : [],
     { agentChat: sendMessage }
   );
@@ -105,16 +109,30 @@ function WorkforceAnalystView() {
         <div className="w-96 min-w-0 -mr-6 pr-0 fixed right-[14px] top-[73px] bottom-0 z-40">
           <AssistantPanel
             isMinimized={isAssistantMinimized}
-            onMinimize={() => setIsAssistantMinimized(true)}
-            onMaximize={() => setIsAssistantMinimized(false)}
+            onMinimize={() => {
+              setIsAssistantMinimized(true);
+              setHasManuallyMinimized(true);
+            }}
+            onMaximize={() => {
+              setIsAssistantMinimized(false);
+              setHasManuallyMinimized(false);
+            }}
+            flowComplete={flowComplete}
           />
         </div>
       )}
       {isAssistantMinimized && (
         <AssistantPanel
           isMinimized={isAssistantMinimized}
-          onMinimize={() => setIsAssistantMinimized(true)}
-          onMaximize={() => setIsAssistantMinimized(false)}
+          onMinimize={() => {
+            setIsAssistantMinimized(true);
+            setHasManuallyMinimized(true);
+          }}
+          onMaximize={() => {
+            setIsAssistantMinimized(false);
+            setHasManuallyMinimized(false);
+          }}
+          flowComplete={flowComplete}
         />
       )}
     </div>

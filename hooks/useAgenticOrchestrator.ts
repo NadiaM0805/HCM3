@@ -18,6 +18,7 @@ export function useAgenticOrchestrator(
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [running, setRunning] = useState(false);
   const [hasRun, setHasRun] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
   const hasRunRef = useRef(false);
   const stepsRef = useRef<string>(""); // Track steps to detect changes
 
@@ -48,6 +49,7 @@ export function useAgenticOrchestrator(
     }
 
     setRunning(false);
+    setIsComplete(true);
   }
 
   // Reset when steps change (persona switch)
@@ -58,6 +60,7 @@ export function useAgenticOrchestrator(
       setRunning(false);
       setCurrentStep(0);
       setHasRun(false);
+      setIsComplete(false);
       stepsRef.current = stepsKey;
     }
   }, [steps]);
@@ -89,8 +92,9 @@ export function useAgenticOrchestrator(
       setRunning(false);
       setCurrentStep(0);
       setHasRun(false);
+      setIsComplete(false);
     }
   }, [agenticMode]);
 
-  return { currentStep, running };
+  return { currentStep, running, isComplete };
 }

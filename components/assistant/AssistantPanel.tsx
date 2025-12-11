@@ -9,19 +9,16 @@ interface AssistantPanelProps {
   isMinimized: boolean;
   onMinimize: () => void;
   onMaximize: () => void;
+  flowComplete?: boolean;
 }
 
-export function AssistantPanel({ isMinimized, onMinimize, onMaximize }: AssistantPanelProps) {
+export function AssistantPanel({ isMinimized, onMinimize, onMaximize, flowComplete = false }: AssistantPanelProps) {
   const { agenticMode } = useAgentic();
   const { messages } = useAgentChat();
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Auto-open assistant when agentic mode is active
-  useEffect(() => {
-    if (agenticMode && isMinimized) {
-      onMaximize();
-    }
-  }, [agenticMode, isMinimized, onMaximize]);
+  // Note: Auto-open logic is now handled in the parent component
+  // This prevents conflicts with manual minimize/maximize
 
   // Auto-scroll to last message
   useEffect(() => {
@@ -65,7 +62,11 @@ export function AssistantPanel({ isMinimized, onMinimize, onMaximize }: Assistan
           <div className="inline-flex justify-end items-center gap-2">
             {/* Minimize button */}
             <div
-              onClick={onMinimize}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onMinimize();
+              }}
               data-chat-view="Expand"
               className="w-20 h-20 p-2 relative rounded-[50px] flex justify-center items-center cursor-pointer hover:bg-gray-100 transition-colors"
               title="Minimize"
@@ -111,20 +112,22 @@ export function AssistantPanel({ isMinimized, onMinimize, onMaximize }: Assistan
                 </div>
               </div>
             ))}
-            {/* Close Assistant Button - shown after all messages */}
-            <div className="pt-2">
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  onMinimize();
-                }}
-                type="button"
-                className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-gray-300 inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
-              >
-                Close Assistant
-              </button>
-            </div>
+            {/* Close Assistant Button - only show when flow is complete and last message is the final one */}
+            {flowComplete && messages.length > 0 && messages[messages.length - 1] === "Everything is in good shape, Alex. You can continue reviewing allocations or upload a revised strategy whenever needed." && (
+              <div className="pt-2">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onMinimize();
+                  }}
+                  type="button"
+                  className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-gray-300 inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
+                >
+                  Close Assistant
+                </button>
+              </div>
+            )}
           </>
         ) : (
           <div className="flex gap-3 items-start">
