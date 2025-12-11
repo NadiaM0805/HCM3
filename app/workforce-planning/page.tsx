@@ -749,44 +749,45 @@ export default function WorkforcePlanningPage() {
   const [isAssistantMinimized, setIsAssistantMinimized] = useState(!agenticMode);
   const [startAuto, setStartAuto] = useState<boolean | null>(null);
 
-  // Reset chat and open assistant when HRBP role is active in agentic mode
+  const isHRBPAgentic = agenticMode && currentRole === "HRBP";
+
+  // When HRBP + agentic, open/reset assistant
   useEffect(() => {
-    if (currentRole === "HRBP" && agenticMode) {
-      resetChat();
-      setIsAssistantMinimized(false);
-      setStartAuto(null); // Reset choice when role changes
-    } else {
+    if (!isHRBPAgentic) {
       setIsAssistantMinimized(true);
+      return;
     }
-  }, [currentRole, agenticMode, resetChat]);
+    
+    resetChat();
+    setIsAssistantMinimized(false);
+    setStartAuto(null);
+  }, [isHRBPAgentic, resetChat]);
 
-  // Offer flow: ask Dana if she wants auto plan
-  // Only create flow when conditions are met
-  const shouldShowOffer = agenticMode && currentRole === "HRBP" && startAuto === null;
-  const hrbpOfferFlow = shouldShowOffer
-    ? createHRBPOfferFlow(sendMessage, setStartAuto)
-    : [];
+  // Offer flow: ask Dana if she wants an auto plan
+  const hrbpOfferFlow =
+    isHRBPAgentic && startAuto === null
+      ? createHRBPOfferFlow(sendMessage, setStartAuto)
+      : [];
 
-  // Run offer flow only while startAuto is null
+  // Run offer flow
+  useAgenticOrchestrator(hrbpOfferFlow, {
+    agentChat: sendMessage,
+  });
+
+  // If Dana clicked "Yes, generate plan"
   useAgenticOrchestrator(
-    shouldShowOffer ? hrbpOfferFlow : [],
-    { agentChat: sendMessage }
-  );
-
-  // Run auto plan flow only if user clicked "Yes"
-  useAgenticOrchestrator(
-    agenticMode && currentRole === "HRBP" && startAuto === true
-      ? hrbpAutoPlanFlow
-      : [],
+    isHRBPAgentic && startAuto === true ? hrbpAutoPlanFlow : [],
     { agentChat: sendMessage }
   );
 
   // If Dana clicked "No, I'll review manually"
   useEffect(() => {
-    if (agenticMode && currentRole === "HRBP" && startAuto === false) {
-      sendMessage("No problem, Dana. You can review the OKRs and add headcount manually whenever you're ready.");
+    if (isHRBPAgentic && startAuto === false) {
+      sendMessage(
+        "No problem, Dana. You can review the OKRs and add headcount manually whenever you're ready."
+      );
     }
-  }, [agenticMode, currentRole, startAuto, sendMessage]);
+  }, [isHRBPAgentic, startAuto, sendMessage]);
 
   // Modal states for the draft plan flow
   const [isFreezePlanOpen, setIsFreezePlanOpen] = useState(false);

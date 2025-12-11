@@ -86,11 +86,11 @@ export const hrbpAutoPlanFlow = [
         }
       }
       if (agentChat) {
-        agentChat("For each key result, I'll infer the skills and roles needed to deliver it and translate that into suggested headcount.");
+        agentChat("For each key result, I infer the skills and roles needed and translate them into suggested headcount.");
         await new Promise((res) => setTimeout(res, 900));
         agentChat("For example, to reduce lobby wait time we'll staff additional branch advisors and queue managers in Q1–Q2.");
         await new Promise((res) => setTimeout(res, 900));
-        agentChat("For migrating cash transactions to self-service, we'll need implementation specialists and in-branch digital ambassadors.");
+        agentChat("For migrating cash transactions to self-service, we'll add implementation specialists and digital ambassadors.");
         await new Promise((res) => setTimeout(res, 900));
       }
     },
