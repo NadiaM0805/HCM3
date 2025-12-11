@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/design-system/Button";
 import { Badge } from "@/components/design-system/Badge";
@@ -15,6 +16,7 @@ import { CreatePositionModal } from "@/components/workforce-planning/CreatePosit
 import { BudgetApprovalModal } from "@/components/workforce-planning/BudgetApprovalModal";
 import { useRole } from "@/contexts/RoleContext";
 import { useAgentic } from "@/contexts/AgenticContext";
+import { AgenticProvider } from "@/contexts/AgenticContext";
 import { useAgentChat } from "@/contexts/AgentChatContext";
 import { useAgenticOrchestrator } from "@/hooks/useAgenticOrchestrator";
 import { createHRBPOfferFlow, hrbpAutoPlanFlow } from "@/agenticFlows/hrbpFlow";
@@ -737,19 +739,37 @@ function Artifacts({
 }
 
 // Main Workforce Planning Page
-export default function WorkforcePlanningPage() {
+function WorkforcePlanningPageContent() {
   const { currentRole } = useRole();
   const { agenticMode } = useAgentic();
   const { messages: agentMessages, sendMessage, resetChat } = useAgentChat();
+  const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<"strategy" | "draft" | "playground">("strategy");
   const [draftPlanLines, setDraftPlanLines] = useState<PlanLine[]>([]);
   const [hasAgentDraft, setHasAgentDraft] = useState(false);
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [agentReasoning, setAgentReasoning] = useState<string | null>(null);
-  const [isAssistantMinimized, setIsAssistantMinimized] = useState(!agenticMode);
+  
+  // Detect if we're coming from agentic route (check if pathname includes agentic-autonomous)
+  const isFromAgenticRoute = typeof window !== "undefined" && 
+    (pathname?.includes("agentic-autonomous") || 
+     document.referrer.includes("agentic-autonomous") ||
+     sessionStorage.getItem("agenticMode") === "true");
+  
+  // Use agentic mode from context, or detect from route
+  const effectiveAgenticMode = agenticMode || isFromAgenticRoute;
+  
+  const [isAssistantMinimized, setIsAssistantMinimized] = useState(!effectiveAgenticMode);
   const [startAuto, setStartAuto] = useState<boolean | null>(null);
 
-  const isHRBPAgentic = agenticMode && currentRole === "HRBP";
+  const isHRBPAgentic = effectiveAgenticMode && currentRole === "HRBP";
+  
+  // Store agentic mode in sessionStorage when detected
+  useEffect(() => {
+    if (isFromAgenticRoute && typeof window !== "undefined") {
+      sessionStorage.setItem("agenticMode", "true");
+    }
+  }, [isFromAgenticRoute]);
 
   // When HRBP + agentic, open/reset assistant
   useEffect(() => {
@@ -917,7 +937,7 @@ export default function WorkforcePlanningPage() {
             isMinimized={isAssistantMinimized}
             onMinimize={() => setIsAssistantMinimized(true)}
             onMaximize={() => setIsAssistantMinimized(false)}
-            agenticMode={agenticMode}
+            agenticMode={effectiveAgenticMode}
             agentMessages={agentMessages}
             currentRole={currentRole}
           />
@@ -960,4 +980,23 @@ export default function WorkforcePlanningPage() {
       )}
     </AppLayout>
   );
+}
+
+// Main Workforce Planning Page - Wrap with AgenticProvider if needed
+export default function WorkforcePlanningPage() {
+  const pathname = usePathname();
+  
+  // Check if we're in an agentic route
+  const isAgenticRoute = pathname?.includes("agentic-autonomous");
+  
+  // If we're in an agentic route, wrap with AgenticProvider
+  if (isAgenticRoute) {
+    return (
+      <AgenticProvider agenticMode={true}>
+        <WorkforcePlanningPageContent />
+      </AgenticProvider>
+    );
+  }
+  
+  return <WorkforcePlanningPageContent />;
 }
