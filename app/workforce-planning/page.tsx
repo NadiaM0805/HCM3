@@ -34,6 +34,7 @@ interface PlanningWorkspaceProps {
   onViewDraftPlanAndMinimize?: () => void;
   agenticMode?: boolean;
   agentMessages?: Array<string | { text: string; actions?: Array<{ label: string; onClick: () => void }> }>;
+  currentRole?: string;
 }
 
 function PlanningWorkspace({
@@ -47,6 +48,7 @@ function PlanningWorkspace({
   onViewDraftPlanAndMinimize,
   agenticMode = false,
   agentMessages = [],
+  currentRole,
 }: PlanningWorkspaceProps) {
   const { agenticMode: contextAgenticMode } = useAgentic();
 
@@ -109,8 +111,8 @@ function PlanningWorkspace({
 
       {/* Conversation Area */}
       <div className="flex-1 flex flex-col gap-6 px-6 py-4 overflow-y-auto">
-        {/* Agent Messages */}
-        {agentMessages.length > 0 && (
+        {/* Agent Messages - Always show if there are messages */}
+        {agentMessages.length > 0 ? (
           <>
             {agentMessages.map((message, idx) => {
               const messageText = typeof message === "string" ? message : message.text;
@@ -147,10 +149,10 @@ function PlanningWorkspace({
               );
             })}
           </>
-        )}
+        ) : null}
 
-        {/* Default Assistant Message (only if no agent messages) */}
-        {agentMessages.length === 0 && (
+        {/* Default Assistant Message (only if no agent messages AND not in agentic mode for HRBP) */}
+        {agentMessages.length === 0 && !(agenticMode && currentRole === "HRBP") ? (
           <div className="flex gap-3 items-start">
             {/* Avatar */}
             <div className="relative w-8 h-8 shrink-0">
@@ -255,7 +257,7 @@ function PlanningWorkspace({
               )}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
 
       {/* Chat Input Area */}
@@ -759,16 +761,15 @@ export default function WorkforcePlanningPage() {
   }, [currentRole, agenticMode, resetChat]);
 
   // Offer flow: ask Dana if she wants auto plan
-  const hrbpOfferFlow =
-    agenticMode && currentRole === "HRBP"
-      ? createHRBPOfferFlow(sendMessage, setStartAuto)
-      : [];
+  // Only create flow when conditions are met
+  const shouldShowOffer = agenticMode && currentRole === "HRBP" && startAuto === null;
+  const hrbpOfferFlow = shouldShowOffer
+    ? createHRBPOfferFlow(sendMessage, setStartAuto)
+    : [];
 
   // Run offer flow only while startAuto is null
   useAgenticOrchestrator(
-    agenticMode && currentRole === "HRBP" && startAuto === null
-      ? hrbpOfferFlow
-      : [],
+    shouldShowOffer ? hrbpOfferFlow : [],
     { agentChat: sendMessage }
   );
 
@@ -902,6 +903,7 @@ export default function WorkforcePlanningPage() {
             onMaximize={() => setIsAssistantMinimized(false)}
             agenticMode={agenticMode}
             agentMessages={agentMessages}
+            currentRole={currentRole}
           />
           </div>
         ) : (
@@ -916,6 +918,7 @@ export default function WorkforcePlanningPage() {
             onMaximize={() => setIsAssistantMinimized(false)}
             agenticMode={agenticMode}
             agentMessages={agentMessages}
+            currentRole={currentRole}
           />
         )}
       </div>
