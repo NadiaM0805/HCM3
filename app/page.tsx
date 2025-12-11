@@ -151,7 +151,8 @@ function BULeaderView() {
     }
   }, [agenticMode, resetChat]);
   
-  // Integrate orchestrator for BU Leader flow
+  // Note: BU Leader flow is now handled in the agentic-autonomous page
+  // Legacy flow kept for backward compatibility
   useAgenticOrchestrator(
     agenticMode ? buLeaderFlow : [],
     { agentChat: sendMessage }
@@ -267,7 +268,7 @@ function BULeaderView() {
         </div>
       </div>
 
-      <div className="flex items-center justify-between mb-4">
+      <div className="flex items-center justify-between mb-4" data-testid="okr-section">
         <h2 className="text-lg font-semibold text-gray-900">Objectives & Key Results</h2>
         <Button
           buttonType="primary"
@@ -287,6 +288,8 @@ function BULeaderView() {
             Objective Title
           </label>
           <input
+            id="okr-objective-1-input"
+            data-testid="okr-objective-input"
             type="text"
             value={newObjectiveTitle}
             onChange={(e) => setNewObjectiveTitle(e.target.value)}

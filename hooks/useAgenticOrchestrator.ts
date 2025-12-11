@@ -5,8 +5,10 @@ import { useAgentic } from "@/contexts/AgenticContext";
 import { useAgenticCursor } from "@/contexts/CursorContext";
 import type { AgenticStep } from "@/types/agentic";
 
+import type { ChatMessage, MessageAction } from "@/contexts/AgentChatContext";
+
 interface OrchestratorOptions {
-  agentChat?: (message: string) => void;
+  agentChat?: (message: string | ChatMessage, actions?: MessageAction[]) => void;
 }
 
 export function useAgenticOrchestrator(

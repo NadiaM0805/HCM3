@@ -107,13 +107,31 @@ export function AssistantPanel({ isMinimized, onMinimize, onMaximize, flowComple
                 </div>
                 <div className="flex-1">
                   <div className="text-sm text-[#353b46] leading-6">
-                    <p>{message}</p>
+                    <p>{typeof message === "string" ? message : message.text}</p>
                   </div>
+                  {/* Action Buttons */}
+                  {typeof message !== "string" && message.actions && message.actions.length > 0 && (
+                    <div className="flex gap-2 mt-3">
+                      {message.actions.map((action, actionIdx) => (
+                        <button
+                          key={actionIdx}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            action.onClick();
+                          }}
+                          className="px-4 py-2 rounded-md bg-[#4d3ee0] text-white hover:bg-[#3a2ea8] text-sm font-medium transition-colors"
+                        >
+                          {action.label}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
             {/* Close Assistant Button - only show when flow is complete and last message is the final one */}
-            {flowComplete && messages.length > 0 && messages[messages.length - 1] === "Everything is in good shape, Alex. You can continue reviewing allocations or upload a revised strategy whenever needed." && (
+            {flowComplete && messages.length > 0 && (typeof messages[messages.length - 1] === "string" ? messages[messages.length - 1] : messages[messages.length - 1].text) === "Everything is in good shape, Alex. You can continue reviewing allocations or upload a revised strategy whenever needed." && (
               <div className="pt-2">
                 <button
                   onClick={(e) => {

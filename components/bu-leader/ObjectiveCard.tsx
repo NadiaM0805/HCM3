@@ -77,6 +77,8 @@ export function ObjectiveCard({
               Key Result Description
             </label>
             <input
+              id={`okr-kr-${objective.keyResults.length + 1}-input`}
+              data-testid="okr-kr-input"
               type="text"
               value={newKrDescription}
               onChange={(e) => onNewKrDescriptionChange(e.target.value)}

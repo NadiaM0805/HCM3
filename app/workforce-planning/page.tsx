@@ -33,7 +33,7 @@ interface PlanningWorkspaceProps {
   onMaximize: () => void;
   onViewDraftPlanAndMinimize?: () => void;
   agenticMode?: boolean;
-  agentMessages?: string[];
+  agentMessages?: Array<string | { text: string; actions?: Array<{ label: string; onClick: () => void }> }>;
 }
 
 function PlanningWorkspace({
@@ -112,18 +112,40 @@ function PlanningWorkspace({
         {/* Agent Messages */}
         {agentMessages.length > 0 && (
           <>
-            {agentMessages.map((message, idx) => (
-              <div key={idx} className="flex gap-3 items-start">
-                <div className="relative w-8 h-8 shrink-0">
-                  <Image src="/x+.svg" alt="X+" width={32} height={32} className="w-8 h-8" />
-                </div>
-                <div className="flex-1">
-                  <div className="text-sm text-[#353b46] leading-6">
-                    <p>{message}</p>
+            {agentMessages.map((message, idx) => {
+              const messageText = typeof message === "string" ? message : message.text;
+              const messageActions = typeof message === "string" ? undefined : message.actions;
+              return (
+                <div key={idx} className="flex gap-3 items-start">
+                  <div className="relative w-8 h-8 shrink-0">
+                    <Image src="/x+.svg" alt="X+" width={32} height={32} className="w-8 h-8" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="text-sm text-[#353b46] leading-6">
+                      <p>{messageText}</p>
+                    </div>
+                    {/* Action Buttons */}
+                    {messageActions && messageActions.length > 0 && (
+                      <div className="flex gap-2 mt-3">
+                        {messageActions.map((action, actionIdx) => (
+                          <button
+                            key={actionIdx}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              action.onClick();
+                            }}
+                            className="px-4 py-2 rounded-md bg-[#4d3ee0] text-white hover:bg-[#3a2ea8] text-sm font-medium transition-colors"
+                          >
+                            {action.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </>
         )}
 
