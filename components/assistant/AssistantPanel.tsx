@@ -75,7 +75,11 @@ export function AssistantPanel({ isMinimized, onMinimize, onMaximize }: Assistan
             
             {/* Close button */}
             <div
-              onClick={onMinimize}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onMinimize();
+              }}
               data-size="Big"
               data-state="Default"
               data-type="Tertiary (Ghost)"
@@ -110,7 +114,12 @@ export function AssistantPanel({ isMinimized, onMinimize, onMaximize }: Assistan
             {/* Close Assistant Button - shown after all messages */}
             <div className="pt-2">
               <button
-                onClick={onMinimize}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onMinimize();
+                }}
+                type="button"
                 className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-gray-300 inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors text-sm font-medium text-gray-700"
               >
                 Close Assistant

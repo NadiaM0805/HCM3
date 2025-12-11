@@ -14,7 +14,13 @@ export function AgentChatProvider({ children }: { children: ReactNode }) {
   const [messages, setMessages] = useState<string[]>([]);
 
   const sendMessage = useCallback((message: string) => {
-    setMessages((prev) => [...prev, message]);
+    setMessages((prev) => {
+      // Prevent duplicate messages
+      if (prev.length > 0 && prev[prev.length - 1] === message) {
+        return prev;
+      }
+      return [...prev, message];
+    });
   }, []);
 
   const resetChat = useCallback(() => {

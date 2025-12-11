@@ -34,12 +34,14 @@ export function useAgenticOrchestrator(
       const step = steps[i];
 
       // Execute step with all available actions, including agentChat
-      await step.action({
-        agentChat,
-        act,
-        type,
-        select,
-      });
+      if (step.action) {
+        await step.action({
+          agentChat,
+          act,
+          type,
+          select,
+        });
+      }
       
       // Wait 700ms between steps for better readability
       await new Promise((res) => setTimeout(res, 700));

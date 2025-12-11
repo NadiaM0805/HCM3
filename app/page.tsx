@@ -40,6 +40,9 @@ function WorkforceAnalystView() {
       resetChat();
       // Auto-open assistant in agentic mode
       setIsAssistantMinimized(false);
+    } else {
+      // Close assistant when not in agentic mode
+      setIsAssistantMinimized(true);
     }
   }, [agenticMode, resetChat]);
   
