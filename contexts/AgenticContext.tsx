@@ -1,12 +1,16 @@
 "use client";
 
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, ReactNode, useState } from "react";
 
 interface AgenticContextType {
   agenticMode: boolean;
+  setAgenticMode: (value: boolean) => void;
 }
 
-const AgenticContext = createContext<AgenticContextType>({ agenticMode: false });
+export const AgenticContext = createContext<AgenticContextType>({
+  agenticMode: false,
+  setAgenticMode: () => {},
+});
 
 export function AgenticProvider({
   children,
@@ -15,8 +19,10 @@ export function AgenticProvider({
   children: ReactNode;
   agenticMode?: boolean;
 }) {
+  const [mode, setMode] = useState(agenticMode);
+  
   return (
-    <AgenticContext.Provider value={{ agenticMode }}>
+    <AgenticContext.Provider value={{ agenticMode: mode, setAgenticMode: setMode }}>
       {children}
     </AgenticContext.Provider>
   );
@@ -25,4 +31,3 @@ export function AgenticProvider({
 export function useAgentic() {
   return useContext(AgenticContext);
 }
-

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Button } from "@/components/design-system/Button";
@@ -676,6 +676,13 @@ export default function WorkforcePlanningPage() {
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [agentReasoning, setAgentReasoning] = useState<string | null>(null);
   const [isAssistantMinimized, setIsAssistantMinimized] = useState(!agenticMode); // Auto-open in agentic mode
+
+  // Auto-open assistant when agentic mode is active
+  useEffect(() => {
+    if (agenticMode && isAssistantMinimized) {
+      setIsAssistantMinimized(false);
+    }
+  }, [agenticMode]);
 
   // Modal states for the draft plan flow
   const [isFreezePlanOpen, setIsFreezePlanOpen] = useState(false);
