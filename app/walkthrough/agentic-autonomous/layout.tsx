@@ -25,6 +25,13 @@ function CursorOverlay() {
 export default function AgenticLayout({ children }: { children: React.ReactNode }) {
   const [agenticMode, setAgenticMode] = useState(true);
 
+  // Set sessionStorage when agentic mode is active
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("agenticMode", "true");
+    }
+  }, []);
+
   return (
     <AgenticContext.Provider value={{ agenticMode, setAgenticMode }}>
       <CursorProvider>

@@ -751,33 +751,30 @@ function WorkforcePlanningPageContent() {
   const [agentReasoning, setAgentReasoning] = useState<string | null>(null);
   
   // Detect if we're coming from agentic route
-  // Check pathname, referrer, or sessionStorage
+  // Check sessionStorage (set by AgenticLayout) or referrer
   const [detectedAgenticMode, setDetectedAgenticMode] = useState(false);
   
   useEffect(() => {
     if (typeof window === "undefined") return;
     
     const checkAgenticMode = () => {
-      const fromPathname = pathname?.includes("agentic-autonomous");
-      const fromReferrer = typeof document !== "undefined" && document.referrer.includes("agentic-autonomous");
       const fromStorage = sessionStorage.getItem("agenticMode") === "true";
+      const fromReferrer = document.referrer.includes("agentic-autonomous");
+      const fromPathname = pathname?.includes("agentic-autonomous");
       
-      const shouldBeAgentic = fromPathname || fromReferrer || fromStorage;
+      const shouldBeAgentic = fromStorage || fromReferrer || fromPathname;
       setDetectedAgenticMode(shouldBeAgentic);
-      
-      if (shouldBeAgentic) {
-        sessionStorage.setItem("agenticMode", "true");
-      }
     };
     
+    // Check immediately
     checkAgenticMode();
     
-    // Also check on pathname change
-    const interval = setInterval(checkAgenticMode, 100);
+    // Also check periodically in case sessionStorage was set after mount
+    const interval = setInterval(checkAgenticMode, 200);
     return () => clearInterval(interval);
   }, [pathname]);
   
-  // Use agentic mode from context, or detect from route
+  // Use agentic mode from context, or detect from route/storage
   const effectiveAgenticMode = agenticMode || detectedAgenticMode;
   
   const [isAssistantMinimized, setIsAssistantMinimized] = useState(!effectiveAgenticMode);
