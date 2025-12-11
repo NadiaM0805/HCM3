@@ -17,6 +17,7 @@ export function useAgenticOrchestrator(
   const { act, type, select } = useAgenticCursor();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [running, setRunning] = useState(false);
+  const [hasRun, setHasRun] = useState(false);
   const hasRunRef = useRef(false);
   const stepsRef = useRef<string>(""); // Track steps to detect changes
 
@@ -40,8 +41,8 @@ export function useAgenticOrchestrator(
         select,
       });
       
-      // Wait 500ms between steps for better readability
-      await new Promise((res) => setTimeout(res, 500));
+      // Wait 700ms between steps for better readability
+      await new Promise((res) => setTimeout(res, 700));
     }
 
     setRunning(false);
@@ -54,20 +55,30 @@ export function useAgenticOrchestrator(
       hasRunRef.current = false;
       setRunning(false);
       setCurrentStep(0);
+      setHasRun(false);
       stepsRef.current = stepsKey;
     }
   }, [steps]);
 
+  // Guard to ensure flow runs only once per mount
   useEffect(() => {
-    if (agenticMode && steps.length > 0 && !running && !hasRunRef.current) {
-      // Small delay to ensure chat is reset first and component is fully mounted
-      const timer = setTimeout(() => {
-        runSteps();
-      }, 200);
-      return () => clearTimeout(timer);
+    if (!agenticMode) {
+      setHasRun(false);
+      hasRunRef.current = false;
+      return;
     }
+    if (hasRun) return;
+    if (steps.length === 0) return;
+    if (running) return;
+    
+    setHasRun(true);
+    // Small delay to ensure chat is reset first and component is fully mounted
+    const timer = setTimeout(() => {
+      runSteps();
+    }, 200);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agenticMode, steps.length, stepsRef.current]);
+  }, [agenticMode, steps.length]);
 
   // Reset when agenticMode changes
   useEffect(() => {
@@ -75,6 +86,7 @@ export function useAgenticOrchestrator(
       hasRunRef.current = false;
       setRunning(false);
       setCurrentStep(0);
+      setHasRun(false);
     }
   }, [agenticMode]);
 

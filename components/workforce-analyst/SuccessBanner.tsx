@@ -1,6 +1,6 @@
 export function SuccessBanner() {
   return (
-    <div className="bg-green-50 border border-green-200 rounded-lg p-6">
+    <div data-testid="strategy-published" className="bg-green-50 border border-green-200 rounded-lg p-6">
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0">
           <svg

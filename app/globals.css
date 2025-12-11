@@ -76,9 +76,10 @@ button:disabled {
 
 /* Agentic highlight animation */
 .agentic-highlight {
-  transition: box-shadow 0.3s ease;
-  box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.6) !important;
-  border-radius: 6px;
+  outline: 3px solid #7F56D9 !important;
+  outline-offset: 3px !important;
+  border-radius: 6px !important;
+  transition: outline 0.3s ease !important;
 }
 
 /* Fix logo size in sidebar */
