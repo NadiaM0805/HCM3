@@ -15,6 +15,9 @@ import { CreatePositionModal } from "@/components/workforce-planning/CreatePosit
 import { BudgetApprovalModal } from "@/components/workforce-planning/BudgetApprovalModal";
 import { useRole } from "@/contexts/RoleContext";
 import { useAgentic } from "@/contexts/AgenticContext";
+import { useAgentChat } from "@/contexts/AgentChatContext";
+import { useAgenticOrchestrator } from "@/hooks/useAgenticOrchestrator";
+import { hrbpFlow } from "@/agenticFlows/hrbpFlow";
 import { toast } from "@/components/design-system/Snackbar";
 import type { PlanLine } from "@/types/planLine";
 import { MOCK_PLAN_LINES } from "@/types/planLine";
@@ -30,6 +33,7 @@ interface PlanningWorkspaceProps {
   onMaximize: () => void;
   onViewDraftPlanAndMinimize?: () => void;
   agenticMode?: boolean;
+  agentMessages?: string[];
 }
 
 function PlanningWorkspace({
@@ -42,7 +46,17 @@ function PlanningWorkspace({
   onMaximize,
   onViewDraftPlanAndMinimize,
   agenticMode = false,
+  agentMessages = [],
 }: PlanningWorkspaceProps) {
+  const { agenticMode: contextAgenticMode } = useAgentic();
+
+  // Auto-open assistant when agentic mode is active
+  useEffect(() => {
+    if (contextAgenticMode && isMinimized) {
+      onMaximize();
+    }
+  }, [contextAgenticMode, isMinimized, onMaximize]);
+
   // Minimized view - floating icon
   if (isMinimized) {
     return (
@@ -95,111 +109,131 @@ function PlanningWorkspace({
 
       {/* Conversation Area */}
       <div className="flex-1 flex flex-col gap-6 px-6 py-4 overflow-y-auto">
-        {/* Assistant Message */}
-        <div className="flex gap-3 items-start">
-          {/* Avatar */}
-          <div className="relative w-8 h-8 shrink-0">
-            <Image src="/x+.svg" alt="X+" width={32} height={32} className="w-8 h-8" />
-          </div>
-          
-          {/* Message Content */}
-          <div className="flex-1 flex flex-col gap-4">
-            {isAgentRunning ? (
-              <>
-                <div className="text-sm text-[#353b46] leading-6">
-                  <p>Drafting headcount plan based on your strategy and budgets…</p>
+        {/* Agent Messages */}
+        {agentMessages.length > 0 && (
+          <>
+            {agentMessages.map((message, idx) => (
+              <div key={idx} className="flex gap-3 items-start">
+                <div className="relative w-8 h-8 shrink-0">
+                  <Image src="/x+.svg" alt="X+" width={32} height={32} className="w-8 h-8" />
                 </div>
-                <div className="flex items-center gap-2 pt-2">
-                  <div className="w-4 h-4 border-2 border-[#4d3ee0] border-t-transparent rounded-full animate-spin" />
-                  <span className="text-sm text-[#637085]">Processing...</span>
-                </div>
-              </>
-            ) : hasAgentDraft ? (
-              <>
-                <div className="text-sm text-[#353b46] leading-6">
-                  <p>
-                    I have loaded the high level strategy along with objectives, Key Results and budgets allocated.
-                  </p>
-                  <p className="mt-2">
-                    I've generated a draft headcount plan based on your strategy and budgets.
-                  </p>
-                </div>
-                <div className="pt-2">
-                  <Badge value="Draft plan generated" type="filled" size="small" />
-                </div>
-                {onViewDraftPlanAndMinimize && (
-                  <div className="pt-2">
-                    <div
-                      onClick={onViewDraftPlanAndMinimize}
-                      className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-[#4d3ee0] inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="justify-center text-[#4d3ee0] text-sm font-medium font-['Poppins'] leading-5 tracking-tight">
-                        View draft plan
-                      </div>
-                    </div>
+                <div className="flex-1">
+                  <div className="text-sm text-[#353b46] leading-6">
+                    <p>{message}</p>
                   </div>
-                )}
-              </>
-            ) : (
-              <>
-                {agenticMode ? (
-                  <>
-                    <div className="text-sm text-[#353b46] leading-6">
-                      <p className="font-semibold mb-2">Welcome to the Agentic Autonomous Workflow.</p>
-                      <p>
-                        I can execute the entire workflow on your behalf — analyzing strategy, generating headcount plans, and orchestrating tasks automatically.
-                      </p>
-                      <p className="mt-2">
-                        Would you like me to run this workflow for you?
-                      </p>
-                    </div>
-                    
-                    {/* Agentic Mode Button */}
+                </div>
+              </div>
+            ))}
+          </>
+        )}
+
+        {/* Default Assistant Message (only if no agent messages) */}
+        {agentMessages.length === 0 && (
+          <div className="flex gap-3 items-start">
+            {/* Avatar */}
+            <div className="relative w-8 h-8 shrink-0">
+              <Image src="/x+.svg" alt="X+" width={32} height={32} className="w-8 h-8" />
+            </div>
+            
+            {/* Message Content */}
+            <div className="flex-1 flex flex-col gap-4">
+              {isAgentRunning ? (
+                <>
+                  <div className="text-sm text-[#353b46] leading-6">
+                    <p>Drafting headcount plan based on your strategy and budgets…</p>
+                  </div>
+                  <div className="flex items-center gap-2 pt-2">
+                    <div className="w-4 h-4 border-2 border-[#4d3ee0] border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm text-[#637085]">Processing...</span>
+                  </div>
+                </>
+              ) : hasAgentDraft ? (
+                <>
+                  <div className="text-sm text-[#353b46] leading-6">
+                    <p>
+                      I have loaded the high level strategy along with objectives, Key Results and budgets allocated.
+                    </p>
+                    <p className="mt-2">
+                      I've generated a draft headcount plan based on your strategy and budgets.
+                    </p>
+                  </div>
+                  <div className="pt-2">
+                    <Badge value="Draft plan generated" type="filled" size="small" />
+                  </div>
+                  {onViewDraftPlanAndMinimize && (
                     <div className="pt-2">
                       <div
-                        data-testid="generate-plan"
+                        onClick={onViewDraftPlanAndMinimize}
+                        className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-[#4d3ee0] inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="justify-center text-[#4d3ee0] text-sm font-medium font-['Poppins'] leading-5 tracking-tight">
+                          View draft plan
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {agenticMode ? (
+                    <>
+                      <div className="text-sm text-[#353b46] leading-6">
+                        <p className="font-semibold mb-2">Welcome to the Agentic Autonomous Workflow.</p>
+                        <p>
+                          I can execute the entire workflow on your behalf — analyzing strategy, generating headcount plans, and orchestrating tasks automatically.
+                        </p>
+                        <p className="mt-2">
+                          Would you like me to run this workflow for you?
+                        </p>
+                      </div>
+                      
+                      {/* Agentic Mode Button */}
+                      <div className="pt-2">
+                      <div
+                        data-testid="generate-headcount"
                         onClick={onRunAgentHeadcount}
                         className="w-full px-4 py-2.5 bg-amber-500 rounded-[10px] inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-amber-600 transition-colors"
                       >
-                        <div data-size="18" data-style="Regular" className="h-4 min-w-4 inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden">
-                          <Image src="/sparkle.svg" alt="Sparkle" width={16} height={16} className="w-4 h-4" />
+                          <div data-size="18" data-style="Regular" className="h-4 min-w-4 inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden">
+                            <Image src="/sparkle.svg" alt="Sparkle" width={16} height={16} className="w-4 h-4" />
+                          </div>
+                          <div className="justify-center text-white text-sm font-medium font-['Poppins'] leading-5 tracking-tight">Yes, run the workflow</div>
                         </div>
-                        <div className="justify-center text-white text-sm font-medium font-['Poppins'] leading-5 tracking-tight">Yes, run the workflow</div>
                       </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-sm text-[#353b46] leading-6">
-                      <p>
-                        I have loaded the high level strategy along with objectives, Key Results and budgets allocated.
-                      </p>
-                      <p className="mt-2">
-                        I can draft a headcount plan based on your strategy and budgets. I'll suggest roles, quantities, timing, and budget allocations.
-                      </p>
-                    </div>
-                    
-                    {/* Agent Recommended Button */}
-                    <div className="pt-2">
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-sm text-[#353b46] leading-6">
+                        <p>
+                          I have loaded the high level strategy along with objectives, Key Results and budgets allocated.
+                        </p>
+                        <p className="mt-2">
+                          I can draft a headcount plan based on your strategy and budgets. I'll suggest roles, quantities, timing, and budget allocations.
+                        </p>
+                      </div>
+                      
+                      {/* Agent Recommended Button */}
+                      <div className="pt-2">
                       <div
-                        data-testid="generate-plan"
+                        data-testid="generate-headcount"
                         onClick={onRunAgentHeadcount}
                         className="w-full px-4 py-2.5 bg-white rounded-[10px] outline outline-1 outline-offset-[-1px] outline-[#4d3ee0] inline-flex justify-center items-center gap-2 cursor-pointer hover:bg-gray-50 transition-colors"
                       >
-                        <div data-size="18" data-style="Regular" className="h-4 min-w-4 inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden">
-                          <Image src="/sparkle.svg" alt="Sparkle" width={16} height={16} className="w-4 h-4" />
-                        </div>
-                        <div className="justify-center text-[#4d3ee0] text-sm font-medium font-['Poppins'] leading-5 tracking-tight">
-                          Agent recommended headcount
+                          <div data-size="18" data-style="Regular" className="h-4 min-w-4 inline-flex flex-col justify-center items-center gap-2.5 overflow-hidden">
+                            <Image src="/sparkle.svg" alt="Sparkle" width={16} height={16} className="w-4 h-4" />
+                          </div>
+                          <div className="justify-center text-[#4d3ee0] text-sm font-medium font-['Poppins'] leading-5 tracking-tight">
+                            Agent recommended headcount
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </>
-                )}
-              </>
-            )}
+                    </>
+                  )}
+                </>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Chat Input Area */}
@@ -672,19 +706,13 @@ function Artifacts({
 export default function WorkforcePlanningPage() {
   const { currentRole } = useRole();
   const { agenticMode } = useAgentic();
+  const { messages: agentMessages, sendMessage } = useAgentChat();
   const [activeTab, setActiveTab] = useState<"strategy" | "draft" | "playground">("strategy");
   const [draftPlanLines, setDraftPlanLines] = useState<PlanLine[]>([]);
   const [hasAgentDraft, setHasAgentDraft] = useState(false);
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [agentReasoning, setAgentReasoning] = useState<string | null>(null);
-  const [isAssistantMinimized, setIsAssistantMinimized] = useState(!agenticMode); // Auto-open in agentic mode
-
-  // Auto-open assistant when agentic mode is active
-  useEffect(() => {
-    if (agenticMode && isAssistantMinimized) {
-      setIsAssistantMinimized(false);
-    }
-  }, [agenticMode]);
+  const [isAssistantMinimized, setIsAssistantMinimized] = useState(!agenticMode);
 
   // Modal states for the draft plan flow
   const [isFreezePlanOpen, setIsFreezePlanOpen] = useState(false);
@@ -693,6 +721,12 @@ export default function WorkforcePlanningPage() {
   const [isBudgetApprovalOpen, setIsBudgetApprovalOpen] = useState(false);
   const [positionBudget, setPositionBudget] = useState<number | null>(null);
   const [availableBudget, setAvailableBudget] = useState<number | null>(null);
+
+  // Integrate orchestrator for HRBP flow
+  useAgenticOrchestrator(
+    currentRole === "HRBP" && agenticMode ? hrbpFlow : [],
+    { agentChat: sendMessage }
+  );
 
   const handleRunAgentHeadcount = () => {
     if (isAgentRunning) return;
@@ -790,17 +824,18 @@ export default function WorkforcePlanningPage() {
         {/* Right Column: Planning Workspace - Narrower width, full height */}
         {!isAssistantMinimized ? (
           <div className="w-96 min-w-0 -mr-6 pr-0 fixed right-[14px] top-[73px] bottom-0 z-40">
-            <PlanningWorkspace
-              onRunAgentHeadcount={handleRunAgentHeadcount}
-              isAgentRunning={isAgentRunning}
-              hasAgentDraft={hasAgentDraft}
-              onViewDraftPlan={handleViewDraftPlan}
-              onViewDraftPlanAndMinimize={handleViewDraftPlanAndMinimize}
-              isMinimized={isAssistantMinimized}
-              onMinimize={() => setIsAssistantMinimized(true)}
-              onMaximize={() => setIsAssistantMinimized(false)}
-              agenticMode={agenticMode}
-            />
+          <PlanningWorkspace
+            onRunAgentHeadcount={handleRunAgentHeadcount}
+            isAgentRunning={isAgentRunning}
+            hasAgentDraft={hasAgentDraft}
+            onViewDraftPlan={handleViewDraftPlan}
+            onViewDraftPlanAndMinimize={handleViewDraftPlanAndMinimize}
+            isMinimized={isAssistantMinimized}
+            onMinimize={() => setIsAssistantMinimized(true)}
+            onMaximize={() => setIsAssistantMinimized(false)}
+            agenticMode={agenticMode}
+            agentMessages={agentMessages}
+          />
           </div>
         ) : (
           <PlanningWorkspace
@@ -813,6 +848,7 @@ export default function WorkforcePlanningPage() {
             onMinimize={() => setIsAssistantMinimized(true)}
             onMaximize={() => setIsAssistantMinimized(false)}
             agenticMode={agenticMode}
+            agentMessages={agentMessages}
           />
         )}
       </div>

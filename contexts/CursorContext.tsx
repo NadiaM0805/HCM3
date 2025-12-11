@@ -20,6 +20,9 @@ export function CursorProvider({ children }: { children: ReactNode }) {
   const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
 
   function moveCursorToElement(el: HTMLElement, duration = 600) {
+    if (typeof window === "undefined" || !el) {
+      return Promise.resolve();
+    }
     return new Promise<void>((resolve) => {
       const rect = el.getBoundingClientRect();
       const targetX = rect.left + rect.width / 2;
@@ -30,6 +33,9 @@ export function CursorProvider({ children }: { children: ReactNode }) {
   }
 
   function clickElement(el: HTMLElement, delay = 300) {
+    if (typeof window === "undefined" || !el) {
+      return Promise.resolve();
+    }
     return new Promise<void>((resolve) => {
       el.click();
       setTimeout(resolve, delay);
@@ -37,6 +43,7 @@ export function CursorProvider({ children }: { children: ReactNode }) {
   }
 
   async function act(selector: string, action: "move" | "click") {
+    if (typeof window === "undefined") return;
     const el = document.querySelector(selector) as HTMLElement;
     if (!el) {
       console.warn(`Element not found: ${selector}`);
@@ -52,6 +59,7 @@ export function CursorProvider({ children }: { children: ReactNode }) {
   }
 
   async function type(selector: string, text: string) {
+    if (typeof window === "undefined") return;
     const el = document.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement;
     if (!el) {
       console.warn(`Element not found: ${selector}`);
@@ -63,6 +71,7 @@ export function CursorProvider({ children }: { children: ReactNode }) {
   }
 
   async function select(selector: string, value: string) {
+    if (typeof window === "undefined") return;
     const el = document.querySelector(selector) as HTMLSelectElement;
     if (!el) {
       console.warn(`Element not found: ${selector}`);
@@ -95,7 +104,16 @@ export function CursorProvider({ children }: { children: ReactNode }) {
 export function useAgenticCursor() {
   const context = useContext(CursorContext);
   if (context === undefined) {
-    throw new Error("useAgenticCursor must be used within a CursorProvider");
+    // Return safe defaults when provider is not available (e.g., during SSR or non-agentic pages)
+    return {
+      cursorPos: { x: -100, y: -100 },
+      setCursorPos: () => {},
+      moveCursorToElement: async () => {},
+      clickElement: async () => {},
+      act: async () => {},
+      type: async () => {},
+      select: async () => {},
+    };
   }
   return context;
 }

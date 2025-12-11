@@ -45,7 +45,7 @@ export function DraftHeadcountPlanTable({
               size="small"
             />
           </div>
-          <div data-testid="freeze-plan-button">
+          <div data-testid="freeze-plan">
             <Button
               buttonType="primary"
               label="Freeze the plan"

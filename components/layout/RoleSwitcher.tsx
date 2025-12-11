@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Role, ROLES } from "@/types/roles";
+import { useAgentChat } from "@/contexts/AgentChatContext";
 
 interface RoleSwitcherProps {
   currentRole: Role;
@@ -10,6 +11,7 @@ interface RoleSwitcherProps {
 
 export function RoleSwitcher({ currentRole, onRoleChange }: RoleSwitcherProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const { resetChat } = useAgentChat();
 
   return (
     <div className="relative">
@@ -46,6 +48,9 @@ export function RoleSwitcher({ currentRole, onRoleChange }: RoleSwitcherProps) {
                 <button
                   key={role}
                   onClick={() => {
+                    if (role !== currentRole) {
+                      resetChat(); // Reset chat when switching personas
+                    }
                     onRoleChange(role);
                     setIsOpen(false);
                   }}

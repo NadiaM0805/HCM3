@@ -3,6 +3,8 @@ export async function typeIntoElement(
   text: string,
   delay = 50
 ) {
+  if (typeof window === "undefined" || !el) return;
+  
   el.focus();
   el.value = "";
 

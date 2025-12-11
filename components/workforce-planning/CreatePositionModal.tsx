@@ -111,7 +111,7 @@ export function CreatePositionModal({
               Position Name
             </label>
             <input
-              id="position-name"
+              id="position-title"
               data-testid="position-name"
               type="text"
               value={positionName}
@@ -159,7 +159,7 @@ export function CreatePositionModal({
               Location
             </label>
             <select
-              id="position-location"
+              id="location-select"
               data-testid="position-location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}

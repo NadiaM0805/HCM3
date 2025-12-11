@@ -18,10 +18,24 @@ import { ObjectiveCard } from "@/components/bu-leader/ObjectiveCard";
 import type { Objective, KeyResult } from "@/types/objectives";
 import { HrbpDashboard } from "@/components/dashboard/HrbpDashboard";
 import { ReportingManagerDashboard } from "@/components/dashboard/ReportingManagerDashboard";
+import { useAgentic } from "@/contexts/AgenticContext";
+import { useAgentChat } from "@/contexts/AgentChatContext";
+import { useAgenticOrchestrator } from "@/hooks/useAgenticOrchestrator";
+import { analystFlow } from "@/agenticFlows/analystFlow";
+import { buLeaderFlow } from "@/agenticFlows/buLeaderFlow";
+import { managerFlow } from "@/agenticFlows/managerFlow";
 
 // Workforce Analyst View
 function WorkforceAnalystView() {
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const { agenticMode } = useAgentic();
+  const { sendMessage } = useAgentChat();
+  
+  // Integrate orchestrator for Analyst flow
+  useAgenticOrchestrator(
+    agenticMode ? analystFlow : [],
+    { agentChat: sendMessage }
+  );
 
   return (
     <>
@@ -76,6 +90,15 @@ function WorkforceAnalystView() {
 
 // BU Leader View
 function BULeaderView() {
+  const { agenticMode } = useAgentic();
+  const { sendMessage } = useAgentChat();
+  
+  // Integrate orchestrator for BU Leader flow
+  useAgenticOrchestrator(
+    agenticMode ? buLeaderFlow : [],
+    { agentChat: sendMessage }
+  );
+  
   const [objectives, setObjectives] = useState<Objective[]>([
     {
       id: "obj-1",

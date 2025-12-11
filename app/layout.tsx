@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { RoleProvider } from "@/contexts/RoleContext";
+import { AgentChatProvider } from "@/contexts/AgentChatContext";
 import { Snackbar } from "@/components/design-system/Snackbar";
 
 const poppins = Poppins({
@@ -26,8 +27,10 @@ export default function RootLayout({
     <html lang="en" className={poppins.variable}>
       <body className={poppins.className}>
         <RoleProvider>
-          {children}
-          <Snackbar />
+          <AgentChatProvider>
+            {children}
+            <Snackbar />
+          </AgentChatProvider>
         </RoleProvider>
       </body>
     </html>

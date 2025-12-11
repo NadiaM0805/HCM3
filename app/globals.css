@@ -81,3 +81,11 @@ button:disabled {
   border-radius: 6px;
 }
 
+/* Fix logo size in sidebar */
+aside img[alt="Home"] {
+  max-width: 24px !important;
+  max-height: 24px !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+

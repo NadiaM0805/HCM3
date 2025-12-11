@@ -91,7 +91,7 @@ export function HrbpDashboard() {
             <p className="text-sm text-gray-600 mb-4">
               Turn FY26 strategy and budgets into time-phased headcount Plan Lines and Position Actions.
             </p>
-            <div data-testid="open-playbook">
+            <div data-testid="open-wfp">
               <Button
                 buttonType="primary"
                 label="Open playbook"
