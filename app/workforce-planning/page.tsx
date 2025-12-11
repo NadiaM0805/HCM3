@@ -703,7 +703,7 @@ function Artifacts({
         <div className="space-y-6">
           <div
             data-testid="wp-draft-plan-status"
-            className="mb-2 inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-medium wp-status-hidden"
+            className="mb-3 inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 px-3 py-1 text-xs font-medium wp-status-hidden"
           >
             Draft plan generated · Ready for review
           </div>

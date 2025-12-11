@@ -68,7 +68,7 @@ export const hrbpAutoPlanFlow = [
       if (typeof window !== "undefined") {
         const btn = document.querySelector("[data-testid='wp-retail-show-details']") as HTMLElement;
         if (btn && !btn.textContent?.includes("Hide details")) {
-          await act("[data-testid='wp-retail-show-details']", "click");
+          await act("wp-retail-show-details", "click");
           await new Promise((res) => setTimeout(res, 600));
         }
       }
@@ -88,9 +88,9 @@ export const hrbpAutoPlanFlow = [
       if (agentChat) {
         agentChat("For each key result, I infer the skills and roles needed and translate them into suggested headcount.");
         await new Promise((res) => setTimeout(res, 900));
-        agentChat("For example, to reduce lobby wait time we'll staff additional branch advisors and queue managers in Q1–Q2.");
+        agentChat("For reducing lobby wait time, we'll staff additional branch advisors and queue managers in Q1–Q2.");
         await new Promise((res) => setTimeout(res, 900));
-        agentChat("For migrating cash transactions to self-service, we'll add implementation specialists and digital ambassadors.");
+        agentChat("For shifting cash transactions to self-service, we'll add implementation specialists and digital ambassadors.");
         await new Promise((res) => setTimeout(res, 900));
       }
     },
@@ -100,7 +100,7 @@ export const hrbpAutoPlanFlow = [
     label: "Opening Draft Headcount Plan…",
     action: async ({ act, agentChat }: AgenticActions) => {
       if (typeof window !== "undefined") {
-        await act("[data-testid='wp-tab-draft-plan']", "click");
+        await act("wp-tab-draft-plan", "click");
         await new Promise((res) => setTimeout(res, 800));
         const table = document.querySelector("[data-testid='wp-draft-plan-table']");
         if (table) {
