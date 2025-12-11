@@ -115,7 +115,7 @@ export const buLeaderAutoOKRFlow = [
       }
       await new Promise((res) => setTimeout(res, 800));
       if (agentChat) {
-        agentChat("Adding Key Result: Increase branch NPS from 68 → 75 by Q4 FY26");
+        agentChat("Adding a Key Result focused on improving branch NPS.");
       }
       await new Promise((res) => setTimeout(res, 700));
     },
@@ -156,7 +156,7 @@ export const buLeaderAutoOKRFlow = [
       }
       await new Promise((res) => setTimeout(res, 800));
       if (agentChat) {
-        agentChat("Adding Key Result: Reduce average in-branch wait time by 20% by Q2 FY26");
+        agentChat("Adding another Key Result to reduce wait times.");
       }
       await new Promise((res) => setTimeout(res, 700));
     },
@@ -187,8 +187,20 @@ export const buLeaderAutoOKRFlow = [
     id: "closing",
     label: "Finishing up…",
     action: async ({ agentChat }: AgenticActions) => {
+      // Show sync status pill
+      if (typeof window !== "undefined") {
+        const syncEl = document.querySelector("[data-testid='okr-sync-status']");
+        if (syncEl) {
+          syncEl.classList.remove("okr-sync-hidden");
+          syncEl.classList.add("okr-sync-visible");
+        }
+      }
+
+      // Closing messages to Priya
       if (agentChat) {
-        agentChat("Your FY26 OKRs are drafted, Priya. You can review and fine-tune them whenever you're ready.");
+        agentChat("Your FY26 objectives and key results for Retail Banking are drafted, Priya.");
+        await new Promise((res) => setTimeout(res, 700));
+        agentChat("These OKRs are now synced to the Workforce Planning playbook, so your HR Business Partner can use them in the next step of planning.");
       }
     },
   },

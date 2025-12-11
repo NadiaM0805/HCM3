@@ -277,7 +277,15 @@ function BULeaderView() {
 
       <div data-testid="okr-section">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900">Objectives & Key Results</h2>
+          <div className="flex-1">
+            <h2 className="text-lg font-semibold text-gray-900">Objectives & Key Results</h2>
+            <div className="flex items-center gap-2 mb-2 okr-sync-hidden" data-testid="okr-sync-status">
+              <span className="inline-flex items-center rounded-full bg-emerald-50 text-emerald-700 px-2.5 py-0.5 text-xs font-medium">
+                Synced to Workforce Planning
+              </span>
+              <span className="text-xs text-slate-500">Last sync: just now</span>
+            </div>
+          </div>
           <button
             onClick={handleAddObjective}
             data-testid="add-objective-button"

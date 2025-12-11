@@ -82,6 +82,16 @@ button:disabled {
   transition: outline 0.3s ease !important;
 }
 
+.okr-sync-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.okr-sync-visible {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
 /* Fix logo size in sidebar */
 aside img[alt="Home"] {
   max-width: 24px !important;
