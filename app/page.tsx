@@ -24,11 +24,13 @@ import { useAgenticOrchestrator } from "@/hooks/useAgenticOrchestrator";
 import { analystFlow } from "@/agenticFlows/analystFlow";
 import { buLeaderFlow } from "@/agenticFlows/buLeaderFlow";
 import { managerFlow } from "@/agenticFlows/managerFlow";
+import { AssistantPanel } from "@/components/assistant/AssistantPanel";
 import { useEffect } from "react";
 
 // Workforce Analyst View
 function WorkforceAnalystView() {
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isAssistantMinimized, setIsAssistantMinimized] = useState(true);
   const { agenticMode } = useAgentic();
   const { sendMessage, resetChat } = useAgentChat();
   
@@ -36,6 +38,8 @@ function WorkforceAnalystView() {
   useEffect(() => {
     if (agenticMode) {
       resetChat();
+      // Auto-open assistant in agentic mode
+      setIsAssistantMinimized(false);
     }
   }, [agenticMode, resetChat]);
   
@@ -46,7 +50,7 @@ function WorkforceAnalystView() {
   );
 
   return (
-    <div data-persona-view="analyst">
+    <div data-persona-view="analyst" className="relative">
       <div className="space-y-6">
         {/* Welcome Header */}
         <WelcomeHeader />
@@ -92,6 +96,24 @@ function WorkforceAnalystView() {
           <StrategyUploadPanel status="awaiting" />
         </Modal.Content>
       </Modal>
+
+      {/* Assistant Panel - Right Side */}
+      {!isAssistantMinimized && (
+        <div className="w-96 min-w-0 -mr-6 pr-0 fixed right-[14px] top-[73px] bottom-0 z-40">
+          <AssistantPanel
+            isMinimized={isAssistantMinimized}
+            onMinimize={() => setIsAssistantMinimized(true)}
+            onMaximize={() => setIsAssistantMinimized(false)}
+          />
+        </div>
+      )}
+      {isAssistantMinimized && (
+        <AssistantPanel
+          isMinimized={isAssistantMinimized}
+          onMinimize={() => setIsAssistantMinimized(true)}
+          onMaximize={() => setIsAssistantMinimized(false)}
+        />
+      )}
     </div>
   );
 }
