@@ -55,34 +55,28 @@ export const hrbpAutoPlanFlow = [
           (card as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
           await new Promise((res) => setTimeout(res, 600));
           card.classList.add("wp-highlight");
-          setTimeout(() => card.classList.remove("wp-highlight"), 1000);
+          setTimeout(() => card.classList.remove("wp-highlight"), 900);
         }
       }
-      await new Promise((res) => setTimeout(res, 700));
+      await new Promise((res) => setTimeout(res, 600));
     },
   },
   {
-    id: "expandRetail",
-    label: "Expanding Retail details…",
-    action: async ({ act }: AgenticActions) => {
+    id: "expandRetailAndHighlightKRs",
+    label: "Expanding Retail details and key results…",
+    action: async ({ agentChat, act }: AgenticActions) => {
       if (typeof window !== "undefined") {
-        const btn = document.querySelector("[data-testid='wp-retail-show-details']") as HTMLElement;
-        if (btn && !btn.textContent?.includes("Hide details")) {
+        const toggle = document.querySelector("[data-testid='wp-retail-show-details']") as HTMLElement;
+        if (toggle && !toggle.textContent?.includes("Hide details")) {
           await act("wp-retail-show-details", "click");
           await new Promise((res) => setTimeout(res, 600));
         }
-      }
-    },
-  },
-  {
-    id: "walkKRs",
-    label: "Walking through KRs…",
-    action: async ({ agentChat }: AgenticActions) => {
-      if (typeof window !== "undefined") {
+        
         const krs = document.querySelector("[data-testid='wp-retail-krs']");
         if (krs) {
+          (krs as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
           krs.classList.add("wp-highlight");
-          setTimeout(() => krs.classList.remove("wp-highlight"), 1000);
+          setTimeout(() => krs.classList.remove("wp-highlight"), 900);
         }
       }
       if (agentChat) {
@@ -96,28 +90,50 @@ export const hrbpAutoPlanFlow = [
     },
   },
   {
-    id: "openDraftTab",
-    label: "Opening Draft Headcount Plan…",
+    id: "addHeadcountOnStrategyTab",
+    label: "Adding headcount from the first KR…",
     action: async ({ act, agentChat }: AgenticActions) => {
       if (typeof window !== "undefined") {
-        await act("wp-tab-draft-plan", "click");
-        await new Promise((res) => setTimeout(res, 800));
-        const table = document.querySelector("[data-testid='wp-draft-plan-table']");
-        if (table) {
-          (table as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
-          table.classList.add("wp-highlight");
-          setTimeout(() => table.classList.remove("wp-highlight"), 1200);
-        }
+        // Click "+ Add Headcount" on KR1
+        await act("wp-add-hc-kr1", "click");
+        await new Promise((res) => setTimeout(res, 700));
+        
+        // The button click will trigger handleAddHeadcount which currently just logs
+        // For now, we'll simulate adding headcount by dispatching a custom event
+        // that the page can listen to, or we'll rely on the page's state management
+        // In a real implementation, clicking the button would open a modal or inline form
+        // For this demo, we'll just show the message that headcount was added
       }
       if (agentChat) {
-        agentChat("I've created a draft headcount plan for Retail Banking based on those key results.");
+        agentChat("I've added headcount for branch advisors and queue managers to support your lobby wait-time objective.");
         await new Promise((res) => setTimeout(res, 900));
       }
     },
   },
   {
-    id: "showStatus",
-    label: "Showing draft plan status…",
+    id: "openDraftTabAndFocusTable",
+    label: "Opening the Draft Headcount Plan…",
+    action: async ({ act, agentChat }: AgenticActions) => {
+      if (typeof window !== "undefined") {
+        await act("wp-tab-draft-plan", "click");
+        await new Promise((res) => setTimeout(res, 700));
+        
+        const table = document.querySelector("[data-testid='wp-draft-plan-table']");
+        if (table) {
+          (table as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
+          table.classList.add("wp-highlight");
+          setTimeout(() => table.classList.remove("wp-highlight"), 900);
+        }
+      }
+      if (agentChat) {
+        agentChat("Here's the draft headcount plan I've created for Retail Banking based on those key results.");
+        await new Promise((res) => setTimeout(res, 700));
+      }
+    },
+  },
+  {
+    id: "showStatusAndCloseLoop",
+    label: "Showing status and closing the loop…",
     action: async ({ agentChat }: AgenticActions) => {
       if (typeof window !== "undefined") {
         const status = document.querySelector("[data-testid='wp-draft-plan-status']");
@@ -128,7 +144,7 @@ export const hrbpAutoPlanFlow = [
       }
       if (agentChat) {
         agentChat(
-          "This plan is a starting point: you can adjust role mix, timing, or FTE counts, then submit it for approval when you're satisfied."
+          "This plan is a starting point: you can adjust roles, FTE, or timing and then submit it for approval when you're satisfied."
         );
       }
     },

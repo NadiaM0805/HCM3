@@ -366,6 +366,7 @@ function KeyResultRow({ kr, onAddHeadcount }: KeyResultRowProps) {
           onFocus={() => {}}
           onMouseEnter={() => {}}
           size="small"
+          data-testid={kr.id === "kr-1" ? "wp-add-hc-kr1" : undefined}
         />
       </div>
     </div>
@@ -385,13 +386,12 @@ function EnhancedStrategyCard({
   budget,
   status = "Not defined",
   strategyData,
-}: EnhancedStrategyCardProps) {
+  onAddHeadcount,
+}: EnhancedStrategyCardProps & { onAddHeadcount?: (krId: string) => void }) {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const handleAddHeadcount = (krId: string) => {
-    // TODO: Wire real flow for adding headcount
-    console.log("Add headcount for KR:", krId);
-  };
+  
+  // Use the passed handler or a no-op
+  const handleAddHeadcount = onAddHeadcount || (() => {});
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 relative" data-testid="wp-retail-card">
@@ -438,7 +438,7 @@ function EnhancedStrategyCard({
                     <KeyResultRow
                       key={kr.id}
                       kr={kr}
-                      onAddHeadcount={handleAddHeadcount}
+                      onAddHeadcount={onAddHeadcount || (() => {})}
                     />
                   ))}
                 </div>
@@ -597,6 +597,7 @@ interface ArtifactsProps {
   onFreezePlan: () => void;
   onOpenFreezePlanModal: () => void;
   agentReasoning: string | null;
+  onAddHeadcount: (krId: string) => void;
 }
 
 function Artifacts({
@@ -607,6 +608,7 @@ function Artifacts({
   onFreezePlan,
   onOpenFreezePlanModal,
   agentReasoning,
+  onAddHeadcount,
 }: ArtifactsProps) {
   const tabs = [
     { id: "strategy" as const, label: "Strategy & Budget", count: null },
@@ -689,6 +691,7 @@ function Artifacts({
             title="Retail Banking (Branch & Consumer Focus) Optimize branch network efficiency while improving customer retention."
             budget="$2.0M"
             strategyData={retailBankingStrategy}
+            onAddHeadcount={onAddHeadcount}
           />
           <StrategyCard
             title="Digital Transformation (Tech & Innovation) Shift from legacy systems to a mobile-first digital ecosystem."
@@ -746,6 +749,40 @@ function WorkforcePlanningPageContent() {
   const pathname = usePathname();
   const [activeTab, setActiveTab] = useState<"strategy" | "draft" | "playground">("strategy");
   const [draftPlanLines, setDraftPlanLines] = useState<PlanLine[]>([]);
+  
+  // Handler for adding headcount from strategy cards
+  const handleAddHeadcount = (krId: string) => {
+    // When "+ Add Headcount" is clicked, add entries to the draft plan
+    // This simulates adding headcount based on the KR
+    if (krId === "kr-1") {
+      // Add headcount entries for the first KR (lobby wait time)
+      const newLines: PlanLine[] = [
+        {
+          id: `line-${Date.now()}-1`,
+          businessUnit: "Retail Banking",
+          division: "Branch & Consumer Focus",
+          role: "Branch Advisor",
+          quarter: "Q1–Q2 FY26",
+          region: "Central",
+          headcount: 4,
+          budget: "$320K",
+          status: "suggested",
+        },
+        {
+          id: `line-${Date.now()}-2`,
+          businessUnit: "Retail Banking",
+          division: "Branch & Consumer Focus",
+          role: "Queue Manager",
+          quarter: "Q1–Q2 FY26",
+          region: "Central",
+          headcount: 2,
+          budget: "$160K",
+          status: "suggested",
+        },
+      ];
+      setDraftPlanLines((prev) => [...prev, ...newLines]);
+    }
+  };
   const [hasAgentDraft, setHasAgentDraft] = useState(false);
   const [isAgentRunning, setIsAgentRunning] = useState(false);
   const [agentReasoning, setAgentReasoning] = useState<string | null>(null);
@@ -786,13 +823,22 @@ function WorkforcePlanningPageContent() {
   useEffect(() => {
     if (!isHRBPAgentic) {
       setIsAssistantMinimized(true);
+      setStartAuto(null);
       return;
     }
     
+    // Reset chat and state when entering HRBP agentic mode
     resetChat();
     setIsAssistantMinimized(false);
     setStartAuto(null);
-  }, [isHRBPAgentic, resetChat]);
+    
+    // Debug logging
+    console.log("[HRBP Agentic] Mode activated", {
+      effectiveAgenticMode,
+      currentRole,
+      isHRBPAgentic,
+    });
+  }, [isHRBPAgentic, resetChat, effectiveAgenticMode, currentRole]);
 
   // Offer flow: ask Dana if she wants an auto plan
   const hrbpOfferFlow =
@@ -800,15 +846,31 @@ function WorkforcePlanningPageContent() {
       ? createHRBPOfferFlow(sendMessage, setStartAuto)
       : [];
 
-  // Run offer flow
+  // Debug: Log flow state
+  useEffect(() => {
+    if (isHRBPAgentic) {
+      console.log("[HRBP Agentic] Flow state:", {
+        startAuto,
+        offerFlowLength: hrbpOfferFlow.length,
+        autoPlanFlowLength: isHRBPAgentic && startAuto === true ? hrbpAutoPlanFlow.length : 0,
+      });
+    }
+  }, [isHRBPAgentic, startAuto, hrbpOfferFlow.length]);
+
+  // Run offer flow - only if we're in HRBP agentic mode and haven't started auto yet
+  // Use forceRun to ensure it runs even if context agenticMode is false
   useAgenticOrchestrator(hrbpOfferFlow, {
     agentChat: sendMessage,
+    forceRun: isHRBPAgentic, // Force run when HRBP agentic mode is active
   });
 
   // If Dana clicked "Yes, generate plan"
   useAgenticOrchestrator(
     isHRBPAgentic && startAuto === true ? hrbpAutoPlanFlow : [],
-    { agentChat: sendMessage }
+    { 
+      agentChat: sendMessage,
+      forceRun: isHRBPAgentic && startAuto === true, // Force run when auto plan should start
+    }
   );
 
   // If Dana clicked "No, I'll review manually"
@@ -919,6 +981,7 @@ function WorkforcePlanningPageContent() {
           onFreezePlan={handleFreezePlan}
           onOpenFreezePlanModal={handleOpenFreezePlanModal}
           agentReasoning={agentReasoning}
+          onAddHeadcount={handleAddHeadcount}
         />
 
         {/* Right Column: Planning Workspace - Narrower width, full height */}

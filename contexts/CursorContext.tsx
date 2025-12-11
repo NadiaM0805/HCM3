@@ -12,6 +12,7 @@ interface CursorContextType {
   act: (selector: string, action: "move" | "click") => Promise<void>;
   type: (selector: string, text: string) => Promise<void>;
   select: (selector: string, value: string) => Promise<void>;
+  scrollToSelector: (selector: string, options?: ScrollIntoViewOptions) => Promise<void>;
 }
 
 const CursorContext = createContext<CursorContextType | undefined>(undefined);
@@ -96,6 +97,17 @@ export function CursorProvider({ children }: { children: ReactNode }) {
     await new Promise((res) => setTimeout(res, 300));
   }
 
+  async function scrollToSelector(selector: string, options?: ScrollIntoViewOptions) {
+    if (typeof window === "undefined") return;
+    const el = document.querySelector(`[data-testid="${selector}"]`) || document.querySelector(selector);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", ...options });
+      await new Promise((res) => setTimeout(res, 600)); // Wait for scroll to complete
+    } else {
+      console.warn(`Element not found for scrolling: ${selector}`);
+    }
+  }
+
   return (
     <CursorContext.Provider
       value={{
@@ -106,6 +118,7 @@ export function CursorProvider({ children }: { children: ReactNode }) {
         act,
         type,
         select,
+        scrollToSelector,
       }}
     >
       {children}
@@ -125,6 +138,7 @@ export function useAgenticCursor() {
       act: async () => {},
       type: async () => {},
       select: async () => {},
+      scrollToSelector: async () => {},
     };
   }
   return context;

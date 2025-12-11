@@ -9,6 +9,7 @@ import type { ChatMessage, MessageAction } from "@/contexts/AgentChatContext";
 
 interface OrchestratorOptions {
   agentChat?: (message: string | ChatMessage, actions?: MessageAction[]) => void;
+  forceRun?: boolean; // Allow forcing the orchestrator to run even if agenticMode is false
 }
 
 export function useAgenticOrchestrator(
@@ -16,7 +17,8 @@ export function useAgenticOrchestrator(
   options: OrchestratorOptions = {}
 ) {
   const { agenticMode } = useAgentic();
-  const { act, type, select } = useAgenticCursor();
+  const { forceRun = false } = options;
+  const { act, type, select, scrollToSelector } = useAgenticCursor();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [running, setRunning] = useState(false);
   const [hasRun, setHasRun] = useState(false);
@@ -27,7 +29,7 @@ export function useAgenticOrchestrator(
   const { agentChat } = options;
 
   async function runSteps() {
-    if (!agenticMode || running || hasRunRef.current) return;
+    if ((!agenticMode && !forceRun) || running || hasRunRef.current) return;
 
     hasRunRef.current = true;
     setRunning(true);
@@ -43,6 +45,7 @@ export function useAgenticOrchestrator(
           act,
           type,
           select,
+          scrollToSelector,
         });
       }
       
@@ -69,7 +72,7 @@ export function useAgenticOrchestrator(
 
   // Guard to ensure flow runs when agentic mode is active and steps are available
   useEffect(() => {
-    if (!agenticMode) {
+    if (!agenticMode && !forceRun) {
       setHasRun(false);
       hasRunRef.current = false;
       setIsComplete(false);
@@ -101,18 +104,18 @@ export function useAgenticOrchestrator(
     }, 800);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [agenticMode, steps.length, steps.map(s => s.id).join(",")]);
+  }, [agenticMode, forceRun, steps.length, steps.map(s => s.id).join(",")]);
 
   // Reset when agenticMode changes
   useEffect(() => {
-    if (!agenticMode) {
+    if (!agenticMode && !forceRun) {
       hasRunRef.current = false;
       setRunning(false);
       setCurrentStep(0);
       setHasRun(false);
       setIsComplete(false);
     }
-  }, [agenticMode]);
+  }, [agenticMode, forceRun]);
 
   return { currentStep, running, isComplete };
 }
