@@ -104,7 +104,7 @@ export const hrbpAutoPlanFlow = [
         await new Promise((res) => setTimeout(res, 800));
         const table = document.querySelector("[data-testid='wp-draft-plan-table']");
         if (table) {
-          table.scrollIntoView({ behavior: "smooth", block: "center" });
+          (table as HTMLElement).scrollIntoView({ behavior: "smooth", block: "center" });
           table.classList.add("wp-highlight");
           setTimeout(() => table.classList.remove("wp-highlight"), 1200);
         }
