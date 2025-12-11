@@ -328,21 +328,22 @@ function BULeaderView() {
         </div>
       )}
 
-      {/* Objectives List */}
-      {objectives.map((objective) => (
-        <ObjectiveCard
-          key={objective.id}
-          objective={objective}
-          activeObjectiveIdForNewKR={activeObjectiveIdForNewKR}
-          newKrDescription={newKrDescription}
-          showKrNotification={showKrNotification}
-          onAddKR={handleAddKR}
-          onSaveKR={handleSaveKR}
-          onCancelKR={handleCancelKR}
-          onNewKrDescriptionChange={setNewKrDescription}
-          onDeleteObjective={handleDeleteObjective}
-        />
-      ))}
+        {/* Objectives List */}
+        {objectives.map((objective) => (
+          <ObjectiveCard
+            key={objective.id}
+            objective={objective}
+            activeObjectiveIdForNewKR={activeObjectiveIdForNewKR}
+            newKrDescription={newKrDescription}
+            showKrNotification={showKrNotification}
+            onAddKR={handleAddKR}
+            onSaveKR={handleSaveKR}
+            onCancelKR={handleCancelKR}
+            onNewKrDescriptionChange={setNewKrDescription}
+            onDeleteObjective={handleDeleteObjective}
+          />
+        ))}
+      </div>
       </div>
 
       {/* Assistant Panel - Right Side */}
