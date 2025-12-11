@@ -91,7 +91,7 @@ export function CreatePositionModal({
             onMouseEnter={() => {}}
             size="small"
           />
-          <div data-testid="create-position">
+          <div data-testid="create-position" id="submit-position">
             <Button
               buttonType="primary"
               label="Create Position"
@@ -111,6 +111,8 @@ export function CreatePositionModal({
               Position Name
             </label>
             <input
+              id="position-name"
+              data-testid="position-name"
               type="text"
               value={positionName}
               onChange={(e) => setPositionName(e.target.value)}
@@ -125,6 +127,8 @@ export function CreatePositionModal({
               Employee ID
             </label>
             <input
+              id="employee-id"
+              data-testid="employee-id"
               type="text"
               value={employeeId}
               onChange={(e) => setEmployeeId(e.target.value)}
@@ -139,6 +143,8 @@ export function CreatePositionModal({
               Reason for Position
             </label>
             <textarea
+              id="position-reason"
+              data-testid="position-reason"
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               rows={3}
@@ -152,13 +158,20 @@ export function CreatePositionModal({
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Location
             </label>
-            <input
-              type="text"
+            <select
+              id="position-location"
+              data-testid="position-location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Enter location"
-            />
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            >
+              <option value="">Select location</option>
+              <option value="New York">New York</option>
+              <option value="San Francisco">San Francisco</option>
+              <option value="Chicago">Chicago</option>
+              <option value="Boston">Boston</option>
+              <option value="Remote">Remote</option>
+            </select>
           </div>
 
           {/* Business Unit */}
@@ -167,6 +180,8 @@ export function CreatePositionModal({
               Business Unit
             </label>
             <select
+              id="position-business-unit"
+              data-testid="position-business-unit"
               value={businessUnit}
               onChange={(e) => setBusinessUnit(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
@@ -185,6 +200,8 @@ export function CreatePositionModal({
               Cost Centre
             </label>
             <input
+              id="cost-centre"
+              data-testid="cost-centre"
               type="text"
               value={costCentre}
               onChange={(e) => setCostCentre(e.target.value)}
@@ -199,6 +216,8 @@ export function CreatePositionModal({
               Reports To
             </label>
             <input
+              id="reports-to"
+              data-testid="reports-to"
               type="text"
               value={reportsTo}
               onChange={(e) => setReportsTo(e.target.value)}
@@ -213,6 +232,8 @@ export function CreatePositionModal({
               Budget
             </label>
             <input
+              id="position-budget"
+              data-testid="position-budget"
               type="text"
               value={budget}
               onChange={(e) => setBudget(e.target.value)}

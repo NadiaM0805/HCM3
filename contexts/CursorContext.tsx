@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useContext, useState, ReactNode } from "react";
+import { typeIntoElement } from "@/utils/agenticTyping";
+import { highlight } from "@/utils/highlightElement";
 
 interface CursorContextType {
   cursorPos: { x: number; y: number };
@@ -8,6 +10,8 @@ interface CursorContextType {
   moveCursorToElement: (el: HTMLElement, duration?: number) => Promise<void>;
   clickElement: (el: HTMLElement, delay?: number) => Promise<void>;
   act: (selector: string, action: "move" | "click") => Promise<void>;
+  type: (selector: string, text: string) => Promise<void>;
+  select: (selector: string, value: string) => Promise<void>;
 }
 
 const CursorContext = createContext<CursorContextType | undefined>(undefined);
@@ -47,6 +51,30 @@ export function CursorProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function type(selector: string, text: string) {
+    const el = document.querySelector(selector) as HTMLInputElement | HTMLTextAreaElement;
+    if (!el) {
+      console.warn(`Element not found: ${selector}`);
+      return;
+    }
+    await moveCursorToElement(el);
+    await highlight(el);
+    await typeIntoElement(el, text);
+  }
+
+  async function select(selector: string, value: string) {
+    const el = document.querySelector(selector) as HTMLSelectElement;
+    if (!el) {
+      console.warn(`Element not found: ${selector}`);
+      return;
+    }
+    await moveCursorToElement(el);
+    await highlight(el);
+    el.value = value;
+    el.dispatchEvent(new Event("change", { bubbles: true }));
+    await new Promise((res) => setTimeout(res, 300));
+  }
+
   return (
     <CursorContext.Provider
       value={{
@@ -55,6 +83,8 @@ export function CursorProvider({ children }: { children: ReactNode }) {
         moveCursorToElement,
         clickElement,
         act,
+        type,
+        select,
       }}
     >
       {children}

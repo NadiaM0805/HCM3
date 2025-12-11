@@ -74,3 +74,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Agentic highlight animation */
+.agentic-highlight {
+  transition: box-shadow 0.3s ease;
+  box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.6) !important;
+  border-radius: 6px;
+}
+
